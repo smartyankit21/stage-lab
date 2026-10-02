@@ -447,7 +447,8 @@ async function pageStock(file) {
     .map(([l, n]) => `<a href="${groupLink(l, n)}">${esc(n)}</a>`).join(" / ") : "";
   view().innerHTML = `
     <p class="dateline"><a href="javascript:history.back()">Back</a></p>
-    <div class="stock-title"><h1>${esc(sym(s.key))}</h1><span class="muted">${esc(nice(s.name, s.key))}</span></div>
+    <div class="stock-title"><h1>${esc(sym(s.key))}</h1><span class="muted">${esc(nice(s.name, s.key))}</span>
+      <span class="stock-actions"><button type="button" id="btn-watch" aria-pressed="false">Watch</button><a class="btn" href="#/journal/new?s=${encodeURIComponent(s.key)}">Log a trade</a></span></div>
     <p class="muted small" style="margin:0 0 18px">${esc(s.exchange)}${crumbs ? `, ${crumbs}` : ""}</p>
     <div class="stock-head"><div class="px">${fmt.px(s.close)}</div><div class="big" style="margin:0">${fmt.pct(s.chg_pct)}</div><div>${fmt.stage(s.stage, s.candidate)}</div></div>
     <p class="summary">${stockSummary(s)}</p>
@@ -462,6 +463,8 @@ async function pageStock(file) {
     <div id="rchart" class="chart small"></div>
     <div class="legend"><span><i style="background:var(--ink)"></i>RS 12M</span><span><i style="background:var(--s1)"></i>RS 3M</span><span>Dotted line marks 70</span></div>
     <section class="section"><h2>Stage 2 checklist <span class="count">${s.rules_met} of 8 met</span></h2><ul class="checks">${ticks}</ul></section>`;
+  $("#btn-watch").onclick = () => watchDialog(s).catch((e) => toast(esc(e.message), true));
+  markWatched(s).catch(() => {});
   const [d, su] = await Promise.all([load(`series/${file}.json`), load("setups.json").catch(() => null)]);
   const setup = su?.setups.find((x) => x.key === s.key);
   if (setup) {
@@ -745,7 +748,8 @@ async function route() {
     else if (name === "stock") await pageStock(decodeURIComponent(parts[1] || ""));
     else if (name === "breadth") await pageBreadth(params);
     else if (name === "setups") await pageSetups(params);
-    else if (name === "watchlist" || name === "journal") pageSoon(name === "watchlist" ? "Watchlist" : "Journal", "Your watchlists and trade journal will be saved to your own free database, so they work on phone and laptop. Coming after the market screens.");
+    else if (name === "watchlist") await pageWatchlist(parts[1]);
+    else if (name === "journal") await pageJournal(parts[1], parts[2], params);
     else pageSoon("Page not found", `There's no page at this address. <a href="#/">Go to the market overview</a>.`);
     if (name === "stages" && params.get("ind")) { const sel = $("#fi"); if (sel) { sel.value = params.get("ind"); sel.dispatchEvent(new Event("input")); } }
   } catch (e) {
@@ -829,6 +833,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   $(".side").addEventListener("click", (e) => { if (e.target.closest("a")) $(".side").classList.remove("open"); });
   load("summary.json").then((s) => ($("#asof").textContent = `Data as of the close on ${fmt.date(s.date)}`)).catch(() => {});
   SPARKS = await load("sparks.json").catch(() => ({}));
+  await finishSignIn().catch(() => {});
   window.addEventListener("hashchange", route);
   route();
 });

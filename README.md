@@ -28,8 +28,22 @@ GitHub Actions, weekdays 7:15 pm IST (and 9:45 pm as a catch-up)
 ## Pages
 
 Overview, Market breadth, Industries (with a rotation chart), Stage 2 stocks and candidates,
-RS screen, Chart setups (Cup & handle / VCP and High tight flag), Stage 2 history, and a
-page for every stock, sector and industry. Press ⌘K (or /) anywhere to search.
+RS screen, Chart setups (Cup & handle / VCP and High tight flag), Stage 2 history, Watchlist,
+Journal, and a page for every stock, sector and industry. Press ⌘K (or /) anywhere to search.
+
+## Watchlist and Journal (Supabase)
+
+Your watchlists and trades live in a free Supabase database, so they sync across devices.
+You sign in with an emailed link (no password). Row-level security means each signed-in
+person can only ever see their own rows, even though the site is public.
+
+One-time setup:
+1. Create a free project at supabase.com.
+2. SQL Editor: run `supabase/schema.sql`.
+3. Authentication → URL Configuration: set Site URL to the live site and add `<site>/**` to Redirect URLs.
+4. Put the Project URL and the public (anon / publishable) key in `site/config.js`. Never the service_role key.
+5. After your first sign-in, you can turn off "Allow new users to sign up" under Authentication → Sign In / Providers,
+   so nobody else can create an account on your database.
 
 ## Method
 
@@ -65,4 +79,5 @@ python -m pytest -q tests               # tests
 To run the job by hand: Actions tab → **daily-update** → **Run workflow**.
 If a run fails, GitHub emails you; the next run fills in anything missed.
 
-Charts use [TradingView Lightweight Charts](https://www.tradingview.com/lightweight-charts/) (Apache 2.0).
+Charts use [TradingView Lightweight Charts](https://www.tradingview.com/lightweight-charts/) (Apache 2.0);
+the database client is [supabase-js](https://github.com/supabase/supabase-js) (MIT).
