@@ -20,7 +20,6 @@ jobs:
     timeout-minutes: 90
     env:
       TZ: Asia/Kolkata
-      NETLIFY_SITE_ID: c35745a0-0091-41c0-ba5f-348d1d90c98c
     steps:
       - uses: actions/checkout@v4
 
@@ -58,9 +57,15 @@ jobs:
             commit -qm "Data as of $(date +%F)"
           git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" data
 
-      - name: Publish the website
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      - name: Publish the website (Netlify deploys the `site` branch automatically)
         run: |
-          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then echo "::error::Add the NETLIFY_AUTH_TOKEN secret (see README)"; exit 1; fi
-          npx -y netlify-cli@17 deploy --prod --dir site --no-build --site "$NETLIFY_SITE_ID" --message "Data as of $(date +%F)"
+          set -e
+          tmp=$(mktemp -d)
+          cp -r site/. "$tmp/"
+          printf '[build]\n  publish = "."\n  command = ""\n\n[[headers]]\n  for = "/data/*"\n  [headers.values]\n    Cache-Control = "public, max-age=300, must-revalidate"\n' > "$tmp/netlify.toml"
+          cd "$tmp"
+          git init -q && git checkout -q --orphan site
+          git add -A
+          git -c user.name="stage-lab bot" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Site as of $(date +%F)"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" site

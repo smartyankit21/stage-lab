@@ -14,7 +14,7 @@ GitHub Actions, weekdays 7:15 pm IST (and 9:45 pm as a catch-up)
   2. download the day's exchange files      engine/sources.py, engine/indices.py
   3. compute RS, stages, breadth, setups   engine/compute.py and friends
   4. save data back to the `data` branch
-  5. publish site/ to Netlify
+  5. push the finished site to the `site` branch, which Netlify publishes
 ```
 
 - **Prices:** NSE daily bhavcopy, with BSE's for BSE-only stocks. Yahoo Finance is the fallback.
@@ -56,12 +56,11 @@ python3 -m http.server 8000 -d site     # then open http://localhost:8000
 python -m pytest -q tests               # tests
 ```
 
-## Setup notes (one-time)
+## Branches
 
-The daily job needs one secret, `NETLIFY_AUTH_TOKEN`:
-1. Netlify → User settings → Applications → Personal access tokens → **New access token**. Copy it.
-2. This repo → Settings → Secrets and variables → Actions → **New repository secret**.
-   Name: `NETLIFY_AUTH_TOKEN`, value: the token.
+- `main`: code
+- `data`: latest price history, industry data and the holiday list (one commit, replaced each run)
+- `site`: the finished website, replaced each run; Netlify deploys it automatically
 
 To run the job by hand: Actions tab → **daily-update** → **Run workflow**.
 If a run fails, GitHub emails you; the next run fills in anything missed.
