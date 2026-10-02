@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stage Lab</title>
+<script>try { const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<link rel="stylesheet" href="style.css">
+<script src="vendor/lightweight-charts.standalone.production.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="shell">
+  <nav class="side" aria-label="Main">
+    <a class="brand" href="#/">Stage Lab</a>
+    <button class="search-trigger" type="button" data-open-search>Search stocks <kbd>⌘K</kbd></button>
+    <ul class="nav" id="navlist">
+      <li><a href="#/" data-route="home">Overview</a></li>
+      <li><a href="#/breadth" data-route="breadth">Market breadth</a></li>
+      <li class="gap" aria-hidden="true"></li>
+      <li><a href="#/industries" data-route="industries">Industries</a></li>
+      <li><a href="#/stages/2" data-route="stages">Stage 2 stocks</a></li>
+      <li><a href="#/rs" data-route="rs">RS screen</a></li>
+      <li><a href="#/setups" data-route="setups">Chart setups</a></li>
+      <li><a href="#/history" data-route="history">Stage 2 history</a></li>
+      <li class="gap" aria-hidden="true"></li>
+      <li><a href="#/watchlist" data-route="watchlist">Watchlist</a></li>
+      <li><a href="#/journal" data-route="journal">Journal</a></li>
+    </ul>
+    <div class="side-foot">
+      <div class="seg-row"><span>RS period</span>
+        <div class="seg" role="group" aria-label="RS period"><button type="button" data-rs="rs12">12M</button><button type="button" data-rs="rs3">3M</button></div></div>
+      <div class="seg-row"><span>Theme</span>
+        <div class="seg" role="group" aria-label="Theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="auto">Auto</button></div></div>
+    </div>
+  </nav>
+  <main>
+    <div class="topbar">
+      <a class="brand" href="#/">Stage Lab</a>
+      <button type="button" data-open-search aria-label="Search stocks">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+    </div>
+    <div class="content" id="view" tabindex="-1"></div>
+    <footer class="foot">
+      <span id="asof"></span>
+      <span>End-of-day data from NSE and BSE. Not investment advice.</span>
+      <span>Charts by <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a> Lightweight Charts</span>
+    </footer>
+  </main>
+</div>
+<nav class="tabbar" aria-label="Sections">
+  <a href="#/" data-route="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>Overview</a>
+  <a href="#/stages/2" data-route="stages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>Stage 2</a>
+  <a href="#/industries" data-route="industries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Industries</a>
+  <a href="#/breadth" data-route="breadth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Breadth</a>
+  <button type="button" data-open-menu><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>More</button>
+</nav>
+</body>
+</html>
