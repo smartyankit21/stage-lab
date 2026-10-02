@@ -737,6 +737,7 @@ async function route() {
   const navName = name === "group" ? "industries" : name === "stock" ? "" : name;
   document.querySelectorAll("a[data-route]").forEach((a) => a.classList.toggle("active", a.dataset.route === navName));
   $(".side").classList.remove("open");
+  view().classList.toggle("wide", name === "screener");
   view().innerHTML = skeleton();
   try {
     if (name === "home") await pageHome();
@@ -745,6 +746,7 @@ async function route() {
     else if (name === "industries") await pageIndustries(params);
     else if (name === "group") await pageGroup(parts[1], decodeURIComponent(parts.slice(2).join("/")));
     else if (name === "history") await pageHistory();
+    else if (name === "screener") await window.pageScreener(parts[1], params);
     else if (name === "stock") await pageStock(decodeURIComponent(parts[1] || ""));
     else if (name === "breadth") await pageBreadth(params);
     else if (name === "setups") await pageSetups(params);

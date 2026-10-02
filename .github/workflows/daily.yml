@@ -2,8 +2,9 @@
 #
 # Production vs experiments:
 #   - Only a run on `main` saves the `data` branch and publishes the live `site` branch.
-#   - A run started on any other branch (e.g. `dev`) reads the saved data but never changes it,
-#     and publishes to `site-dev` (the experiment preview), never to the live site.
+#   - A run started on any other branch (e.g. `dev`) keeps its own data copy in `data-dev`
+#     (started from `data`) and publishes to `site-dev` (the experiment preview). It never
+#     changes `data` or the live `site`.
 name: daily-update
 
 on:
@@ -33,35 +34,45 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install
         run: pip install -r requirements.txt
 
       - name: Check the engine
         run: python -m pytest -q tests
 
-      - name: Restore saved data (price history, industries, holidays)
+      - name: Restore saved data (price history, delivery, industries, holidays)
+        env:
+          DATA_BRANCH: ${{ github.ref == 'refs/heads/main' && 'data' || 'data-dev' }}
         run: |
-          if git fetch --depth=1 origin data; then git archive FETCH_HEAD | tar -x; fi
+          # main uses `data`. Experiment branches use their own `data-dev` copy, started from `data` the first time.
+          if git fetch --depth=1 origin "$DATA_BRANCH"; then git archive FETCH_HEAD | tar -x
+          elif git fetch --depth=1 origin data; then git archive FETCH_HEAD | tar -x; fi
           ls -la data data/meta || echo "No saved data yet - the first run builds the full history"
 
       - name: Download today's prices and compute
         run: python -m engine.run_daily
 
-      - name: Save data to the data branch (main only)
-        if: github.ref == 'refs/heads/main'
+      - name: Save data (main -> `data`; any other branch -> `data-dev`, never the live data)
+        env:
+          DATA_BRANCH: ${{ github.ref == 'refs/heads/main' && 'data' || 'data-dev' }}
         run: |
           set -e
           tmp=$(mktemp -d)
           mkdir -p "$tmp/data"
           cp data/prices.parquet "$tmp/data/"
           if [ -f data/indices.parquet ]; then cp data/indices.parquet "$tmp/data/"; fi
+          if [ -f data/delivery.parquet ]; then cp data/delivery.parquet "$tmp/data/"; fi
           cp -r data/meta "$tmp/data/"
           cd "$tmp"
-          git init -q && git checkout -q --orphan data
+          git init -q && git checkout -q --orphan "$DATA_BRANCH"
           git add -A
           git -c user.name="stage-lab bot" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -qm "Data as of $(date +%F)"
-          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" data
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" "HEAD:$DATA_BRANCH"
 
       - name: Publish the website (main -> live `site`; any other branch -> `site-dev` preview)
         env:
@@ -71,7 +82,7 @@ jobs:
           echo "Publishing to branch: $TARGET"
           tmp=$(mktemp -d)
           cp -r site/. "$tmp/"
-          printf '[build]\n  publish = "."\n  command = ""\n\n[[headers]]\n  for = "/data/*"\n  [headers.values]\n    Cache-Control = "public, max-age=300, must-revalidate"\n' > "$tmp/netlify.toml"
+          printf '[build]\n  publish = "."\n  command = ""\n\n[[headers]]\n  for = "/data/*"\n  [headers.values]\n    Cache-Control = "public, max-age=300, must-revalidate"\n\n[[headers]]\n  for = "/screeners/*"\n  [headers.values]\n    Content-Type = "text/javascript; charset=utf-8"\n' > "$tmp/netlify.toml"
           cd "$tmp"
           git init -q && git checkout -q --orphan "$TARGET"
           git add -A

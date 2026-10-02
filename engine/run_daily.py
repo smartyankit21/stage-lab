@@ -8,10 +8,11 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import subprocess
 
 import pandas as pd
 
-from . import breadth, config, indices, setups, store, universe
+from . import breadth, config, delivery, indices, screener_data, setups, store, universe
 from .compute import compute
 from .groups import group_index, group_stats, rrg
 from .indicators import stage2_episodes
@@ -149,6 +150,18 @@ def write_outputs(res, snap: pd.DataFrame):
     return summary
 
 
+def write_screeners(panel: pd.DataFrame, snap: pd.DataFrame):
+    """Screener page (Match Score, PDV_Persist+Mom). Optional: a failure here never stops the site update."""
+    try:
+        sessions = sorted(set(panel.loc[panel["exchange"] == "NSE", "date"].dt.date))
+        dl = delivery.update(sessions)
+        if screener_data.build(dl, panel, snap):
+            subprocess.run(["node", str(config.ROOT / "engine" / "run_screeners.mjs"), str(config.OUT)],
+                           check=True, cwd=config.ROOT)
+    except Exception as e:  # noqa: BLE001
+        log.warning("screener data skipped: %s", e)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--classify", action="store_true", help="refresh industry classification now (otherwise monthly)")
@@ -174,6 +187,7 @@ def main():
     write_breadth(res, idx_panel)
     write_rotation(res, snap, idx_panel)
     write_setups(res, p)
+    write_screeners(panel, snap)
     print(json.dumps({k: v for k, v in summary.items() if not k.startswith("rs_")}, indent=1, default=str))
 
 
