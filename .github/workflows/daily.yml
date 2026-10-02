@@ -65,7 +65,7 @@ jobs:
           mkdir -p "$tmp/data"
           cp data/prices.parquet "$tmp/data/"
           if [ -f data/indices.parquet ]; then cp data/indices.parquet "$tmp/data/"; fi
-          if [ -f data/delivery.parquet ]; then cp data/delivery.parquet "$tmp/data/"; fi
+          if [ -f data/delivery_all.parquet ]; then cp data/delivery_all.parquet "$tmp/data/"; fi
           cp -r data/meta "$tmp/data/"
           cd "$tmp"
           git init -q && git checkout -q --orphan "$DATA_BRANCH"

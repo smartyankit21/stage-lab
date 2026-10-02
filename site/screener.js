@@ -99,7 +99,7 @@ window.pageScreener = async function pageScreener(kindArg, params) {
         <button type="button" id="scr-export">Export scan</button>
       </div>
     </div>
-    <p class="muted small scr-ribbon">NSE delivery data · ${n0(info.stocks)} stocks · ${n0(info.sessions)} sessions · ${longDate(info.first)} to ${longDate(info.asof)} · updated every evening</p>
+    <p class="muted small scr-ribbon">NSE delivery data · ${n0(info.stocks)} stocks · ${n0(info.sessions)} sessions · ${longDate(info.first)} to ${longDate(info.asof)} · updated every evening${info.market_cap_asof ? ` · market caps: Accumulation Lab snapshot of ${longDate(info.market_cap_asof)} (${n0(info.market_cap_count)} names), scaled by each day's close` : " · market caps: Stage Lab (BSE)"}</p>
     <div class="scr-stats" id="scr-stats"></div>
     <div class="scr-work">
       <section class="scr-list">
@@ -205,7 +205,7 @@ async function select(symbol, { scroll }) {
   catch { box.innerHTML = `<p class="muted">This stock's daily file didn't load. Reload to try again.</p>`; return; }
   if (st.selected !== symbol) return;
   const asof = st.data[st.kind].info.asof;
-  const meta = { symbol, name: item.name, marketCapCrore: capOf(item), file: item.file, page: item.page };
+  const meta = { symbol, name: item.name, file: item.file, page: item.page, ...(capOf(item) == null ? {} : { marketCapCrore: capOf(item) }) };
   const r = st.kind === "match" ? matchStock(toRows(doc), asof, meta) : dailyScoreStock(toRows(doc), asof, meta);
   if (!r) { box.innerHTML = `<p class="muted">${esc(symbol)} has too little history for this screener.</p>`; return; }
   st.detail = r;
@@ -398,7 +398,7 @@ async function exportScan(kind, data) {
         btn.textContent = `Preparing ${n0(i + 1)} of ${n0(list.length)}…`;
         const doc = await fetch(`data/dseries/${it.file}.json`).then((x) => (x.ok ? x.json() : null)).catch(() => null);
         if (!doc) continue;
-        const meta = { symbol: it.symbol, name: it.name, marketCapCrore: capOf(it) };
+        const meta = { symbol: it.symbol, name: it.name, ...(capOf(it) == null ? {} : { marketCapCrore: capOf(it) }) };
         const r = kind === "match" ? matchStock(toRows(doc), asof, meta) : dailyScoreStock(toRows(doc), asof, meta);
         if (r) out[i] = kind === "match" ? matchExport(r) : dailyScoreExport(r);
       }

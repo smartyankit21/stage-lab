@@ -7,8 +7,7 @@ It is the same file Accumulation Lab reads, and it is read the same way (engine.
   delivery (DELIV_QTY), trades (NO_OF_TRADES), turnover in rupees (TURNOVER_LACS x 1e5).
 Prices here are the exchange's own, unadjusted, exactly as Accumulation Lab uses them.
 
-Only equity-like series are kept (config.NSE_SERIES, never BL). Accumulation Lab keeps every series;
-this is the one known difference and it only affects non-equity lines such as bonds.
+Every series in the file is kept, as Accumulation Lab does (its normalizeRows keeps all of them).
 """
 from __future__ import annotations
 
@@ -25,10 +24,9 @@ from . import config
 log = logging.getLogger(__name__)
 
 URL = "https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_{d:%d%m%Y}.csv"
-FILE = config.DATA / "delivery.parquet"
+FILE = config.DATA / "delivery_all.parquet"   # all series (an earlier equity-only file was delivery.parquet)
 KEEP_SESSIONS = 300          # Accumulation Lab keeps about one year (~267 sessions); a little extra for SMA(45)
 BACKFILL_SESSIONS = 270      # how far back to fill when sessions are missing
-SERIES = set(config.NSE_SERIES)
 COLS = ["date", "symbol", "series", "prevClose", "open", "high", "low", "close",
         "volume", "delivery", "trades", "turnover"]
 
@@ -62,7 +60,7 @@ def parse(text: str, expect: date) -> pd.DataFrame:
     })
     if not len(out) or (out["date"].dt.date != expect).any():
         raise ValueError("file is empty or has an unexpected date")
-    return out[out["series"].isin(SERIES)][COLS]
+    return out[COLS]
 
 
 def load() -> pd.DataFrame:

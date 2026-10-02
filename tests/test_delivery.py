@@ -14,12 +14,12 @@ TINYCO, BE, 01-Oct-2026, 10.00, 10.20, 10.40, 10.00, 10.30, 10.30, 10.25, 5000, 
 
 def test_parse_maps_columns_and_units():
     df = delivery.parse(SAMPLE, date(2026, 10, 1))
-    assert list(df["symbol"]) == ["RELIANCE", "TINYCO"]          # bond line (N1) dropped
+    assert list(df["symbol"]) == ["RELIANCE", "SOMEBOND", "TINYCO"]   # every series kept, as Accumulation Lab does
     r = df.iloc[0]
     assert r["close"] == 1167.70 and r["prevClose"] == 1187.20       # CLOSE_PRICE, not LAST_PRICE
     assert r["volume"] == 10234567 and r["trades"] == 254321 and r["delivery"] == 5123456
     assert r["turnover"] == pytest.approx(120265.43 * 100000)        # lakh -> rupees
-    assert df.iloc[1]["delivery"] != df.iloc[1]["delivery"]          # "-" -> missing
+    assert df.iloc[2]["delivery"] != df.iloc[2]["delivery"]          # "-" -> missing
 
 
 def test_parse_rejects_wrong_date():
