@@ -631,8 +631,8 @@ async function pageBreadth(params) {
     </div>
     <div class="grid2">
       <section class="panel"><h2>Participation</h2>
-        <table class="plain"><thead><tr><th>Above the</th><th class="num">Today</th><th class="num">1 week ago</th><th class="num">1 month ago</th><th>Trend</th></tr></thead>
-        <tbody>${["50", "100", "200"].map((n) => { const p = L.participation[n]; return `<tr><td>${n}-day average</td><td class="num">${pctFmt(p.now)}</td><td class="num">${p.w1 == null ? "–" : pctFmt(p.w1)}</td><td class="num">${p.m1 == null ? "–" : pctFmt(p.m1)}</td><td>${trend(p.now, p.w1)}</td></tr>`; }).join("")}</tbody></table></section>
+        <table class="plain"><thead><tr><th>Above the</th><th class="num">Today</th><th class="num">1 week ago</th><th class="num hide-sm">1 month ago</th><th>Trend</th></tr></thead>
+        <tbody>${["50", "100", "200"].map((n) => { const p = L.participation[n]; return `<tr><td>${n}-day average</td><td class="num">${pctFmt(p.now)}</td><td class="num">${p.w1 == null ? "–" : pctFmt(p.w1)}</td><td class="num hide-sm">${p.m1 == null ? "–" : pctFmt(p.m1)}</td><td>${trend(p.now, p.w1)}</td></tr>`; }).join("")}</tbody></table></section>
       <section class="panel"><h2>Sharp moves</h2>
         <table class="plain"><thead><tr><th>Stocks that moved</th><th class="num">Today</th><th class="num">1 week ago</th></tr></thead>
         <tbody>${[["up4", "Up 4% or more in a day"], ["down4", "Down 4% or more in a day"], ["up10_5d", "Up 10% or more over 5 days"], ["down10_5d", "Down 10% or more over 5 days"]]
