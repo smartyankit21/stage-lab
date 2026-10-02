@@ -309,3 +309,58 @@ td.name b { font-weight: 600; }
 .checks .ok::before { content: "✓"; color: var(--up); }
 .checks .no { background: none; box-shadow: inset 0 0 0 1px var(--rule); color: var(--muted); }
 .checks .no::before { content: "✗"; color: var(--down); }
+
+/* ============ watchlist + journal ============ */
+button.primary, .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 500; }
+button.primary:hover { background: var(--ink-2); }
+button:disabled { opacity: .55; cursor: default; }
+button.danger { color: var(--down); border-color: var(--down); }
+.btn { display: inline-block; border: 1px solid var(--rule); border-radius: var(--radius); padding: 5px 9px; color: var(--ink); background: var(--bg); }
+.btn:hover { background: var(--subtle); text-decoration: none; }
+.linkish { border: 0; background: none; padding: 0; color: var(--muted); text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 3px; }
+.linkish:hover { background: none; color: var(--ink); }
+.tabs .linkish { padding: 8px 4px; text-decoration: none; } .tabs .linkish:hover { color: var(--ink); }
+.grow { flex: 1; }
+.toolbar .grow { align-self: stretch; }
+.whoami { font-size: 12px; color: var(--muted); margin: 0 0 14px; max-width: none; }
+.stock-actions { margin-left: auto; display: inline-flex; gap: 8px; }
+#btn-watch[aria-pressed="true"] { background: var(--subtle); font-weight: 600; }
+#btn-watch[aria-pressed="true"]::before { content: "✓ "; color: var(--up); }
+
+.signin { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 22px 0 10px; }
+.signin label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.signin input { min-width: min(320px, 80vw); padding: 8px 11px; }
+.signin button { padding: 8px 14px; }
+
+td.note { max-width: 240px; overflow: hidden; text-overflow: ellipsis; cursor: text; color: var(--ink-2); }
+td.note:hover .note-text { text-decoration: underline; text-decoration-color: var(--rule-strong); }
+td.act { width: 1%; padding-left: 0; padding-right: 4px; }
+button.icon { border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 2px 8px; border-radius: 4px; }
+button.icon:hover { background: var(--rule); color: var(--down); }
+
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 80; background: var(--ink); color: var(--bg);
+  padding: 9px 16px; border-radius: 999px; font-size: 13px; box-shadow: 0 8px 24px rgba(17, 24, 39, .18); max-width: calc(100vw - 32px); }
+.toast.bad { background: var(--down); color: #fff; }
+@media (max-width: 860px) { .toast { bottom: 84px; } }
+
+dialog.sheet { width: min(560px, calc(100vw - 24px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--rule);
+  border-radius: 12px; background: var(--bg); color: var(--ink); box-shadow: 0 24px 60px rgba(17, 24, 39, .22); }
+dialog.sheet::backdrop { background: rgba(17, 24, 39, .32); }
+dialog.sheet form { display: flex; flex-direction: column; max-height: calc(100vh - 50px); }
+dialog.sheet h2 { margin: 0; padding: 16px 20px 0; font-size: 16px; }
+.sheet-body { padding: 14px 20px 6px; overflow-y: auto; }
+.sheet-foot { display: flex; gap: 8px; align-items: center; padding: 12px 20px 16px; border-top: 1px solid var(--rule); }
+.form-err { margin: 0 20px 8px; font-size: 13px; }
+.form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 12px; }
+.form-grid .wide { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); min-width: 0; }
+.field input, .field select, .field textarea { width: 100%; font-size: 14px; padding: 7px 9px; }
+.field textarea { font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: var(--radius); resize: vertical; }
+.field .hint { min-height: 16px; }
+.calc { margin: 0; font-size: 13px; color: var(--ink-2); min-height: 18px; max-width: none; }
+fieldset { border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 8px 12px 12px; margin: 0; min-width: 0; }
+legend { font-size: 12px; font-weight: 600; padding: 0 4px; }
+.checklist { display: flex; flex-direction: column; }
+.checklist label { display: flex; gap: 10px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--rule); cursor: pointer; }
+.checklist input { padding: 0; width: 16px; height: 16px; }
+@media (max-width: 560px) { .form-grid { grid-template-columns: 1fr 1fr; } }
