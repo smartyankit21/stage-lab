@@ -16,33 +16,38 @@
 </head>
 <body>
 <div class="shell">
-  <nav class="side" aria-label="Main">
-    <a class="brand" href="#/">Stage Lab</a>
-    <button class="search-trigger" type="button" data-open-search>Search stocks <kbd>⌘K</kbd></button>
-    <ul class="nav" id="navlist">
-      <li><a href="#/" data-route="home">Overview</a></li>
-      <li><a href="#/breadth" data-route="breadth">Market breadth</a></li>
-      <li class="gap" aria-hidden="true"></li>
-      <li><a href="#/industries" data-route="industries">Industries</a></li>
-      <li><a href="#/stages/2" data-route="stages">Stage 2 stocks</a></li>
-      <li><a href="#/rs" data-route="rs">RS screen</a></li>
-      <li><a href="#/setups" data-route="setups">Chart setups</a></li>
-      <li><a href="#/history" data-route="history">Stage 2 history</a></li>
-      <li><a href="#/screener" data-route="screener" class="nav-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg>Screener</a></li>
-      <li class="gap" aria-hidden="true"></li>
-      <li><a href="#/watchlist" data-route="watchlist">Watchlist</a></li>
-      <li><a href="#/journal" data-route="journal">Journal</a></li>
-    </ul>
-    <div class="side-foot">
-      <div class="seg-row"><span>RS period</span>
-        <div class="seg" role="group" aria-label="RS period"><button type="button" data-rs="rs12">12M</button><button type="button" data-rs="rs3">3M</button></div></div>
-      <div class="seg-row"><span>Theme</span>
-        <div class="seg" role="group" aria-label="Theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="auto">Auto</button></div></div>
-    </div>
-  </nav>
+  <header class="side" aria-label="Main">
+    <a class="brand" href="#/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="9" fill="var(--accent)"/><path d="M8 21.5l5.5-5.5 4 4L24 13" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="brand-text"><b>Stage Lab</b><small>NSE · BSE · end of day</small></span></a>
+    <button class="search-trigger" type="button" data-open-search><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search any stock</span><kbd>⌘K</kbd></button>
+    <nav class="nav" id="navlist" aria-label="Sections">
+      <div class="nav-group"><button type="button" class="nav-btn" aria-haspopup="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>Market<svg class="caret" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="menu">
+          <a href="#/" data-route="home" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h4v7H3zM10 8h4v12h-4zM17 4h4v16h-4z"/></svg><span><b>Overview</b><small>the market at a glance</small></span><i aria-hidden="true">›</i></a>
+          <a href="#/breadth" data-route="breadth" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span><b>Market breadth</b><small>how broad the move is</small></span><i aria-hidden="true">›</i></a>
+          <a href="#/industries" data-route="industries" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span><b>Industries</b><small>which groups lead, and rotation</small></span><i aria-hidden="true">›</i></a>
+        </div></div>
+      <div class="nav-group"><button type="button" class="nav-btn" aria-haspopup="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Screens<svg class="caret" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="menu">
+          <a href="#/stages/2" data-route="stages" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span><b>Stage 2 stocks</b><small>stocks in an established uptrend</small></span><i aria-hidden="true">›</i></a>
+          <a href="#/rs" data-route="rs" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span><b>RS screen</b><small>strongest against the market</small></span><i aria-hidden="true">›</i></a>
+          <a href="#/setups" data-route="setups" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17c3-6 5-6 7-3s4 3 7-5l4 4"/></svg><span><b>Chart setups</b><small>VCP, cup &amp; handle, tight flags</small></span><i aria-hidden="true">›</i></a>
+          <a href="#/history" data-route="history" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 3"/></svg><span><b>Stage 2 history</b><small>every past Stage 2 run</small></span><i aria-hidden="true">›</i></a>
+          <a href="#/screener" data-route="screener" class="menu-item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg><span><b>Screener</b><small>Match Score · PDV_Persist+Mom</small></span><i aria-hidden="true">›</i></a>
+        </div></div>
+      <a href="#/watchlist" data-route="watchlist" class="nav-btn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>Watchlist</a>
+      <a href="#/journal" data-route="journal" class="nav-btn"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Journal</a>
+    </nav>
+    <div class="nav-group side-foot"><button type="button" class="nav-btn icon-only" aria-label="Display settings" aria-haspopup="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      <div class="menu menu-right settings">
+        <div class="seg-row"><span>RS period</span>
+          <div class="seg" role="group" aria-label="RS period"><button type="button" data-rs="rs12">12M</button><button type="button" data-rs="rs3">3M</button></div></div>
+        <div class="seg-row"><span>Theme</span>
+          <div class="seg" role="group" aria-label="Theme"><button type="button" data-theme-set="light">Light</button><button type="button" data-theme-set="dark">Dark</button><button type="button" data-theme-set="auto">Auto</button></div></div>
+      </div></div>
+  </header>
   <main>
     <div class="topbar">
-      <a class="brand" href="#/">Stage Lab</a>
+      <a class="brand" href="#/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="26" height="26"><rect width="32" height="32" rx="9" fill="var(--accent)"/><path d="M8 21.5l5.5-5.5 4 4L24 13" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Stage Lab</a>
       <button type="button" data-open-search aria-label="Search stocks">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       </button>

@@ -109,7 +109,7 @@ function stockTable(el, rows, cols, { sort = prefs.rs, dir = -1, pageSize = 100,
 }
 
 const COL = {
-  name: { key: "name", label: "Company", cls: "name", fixed: true, render: (r) => `<b>${esc(sym(r.key))}</b> <span class="muted">${esc(nice(r.name, r.key))}</span>`, sortVal: (r) => sym(r.key) },
+  name: { key: "name", label: "Stock", cls: "name", fixed: true, render: (r) => `<b>${esc(nice(r.name, r.key))}</b> <span class="tick">${esc(sym(r.key))}</span>`, sortVal: (r) => sym(r.key) },
   spark: { key: "_spark", label: "3 months", nosort: true, cls: "sparkcell", render: (r) => sparkSVG(SPARKS[r.key]) },
   sector: { key: "sector", label: "Sector", render: (r) => esc(r.sector) },
   stage: { key: "stage", label: "Stage", render: (r) => fmt.stage(r.stage, r.candidate) },
@@ -194,7 +194,7 @@ async function pageHome() {
   const day = new Date(sum.date + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   const row = (k, right) => {
     const key = k.key || k, s = byKey[key] || { key, file: key.replace(":", "_") };
-    return `<li><a class="row" href="${stockLink(s)}"><span class="who"><b>${esc(sym(key))}</b><span>${esc(nice(s.name, key))}</span></span>
+    return `<li><a class="row" href="${stockLink(s)}"><span class="who"><b>${esc(nice(s.name, key))}</b><span class="tick">${esc(sym(key))}</span></span>
       ${sparkSVG(sparks[key])}<span class="val">${right(s, k)}</span></a></li>`;
   };
   const list = (keys, right, n = 8) => (keys.length ? `<ul class="rows">${keys.slice(0, n).map((k) => row(k, right)).join("")}</ul>` : `<ul class="rows"><li class="empty">None today.</li></ul>`);
@@ -203,16 +203,23 @@ async function pageHome() {
   const stageOf = (s) => (s.stage ? `<span class="badge st${s.stage}">S${s.stage}</span>` : "–");
   const topSec = sectors.slice(0, 8);
   view().innerHTML = `
-    <p class="dateline">Close of ${day}</p>
-    <h1 class="hero">${B ? `The market is ${B.label.toLowerCase()}. ` : ""}${n2.toLocaleString("en-IN")} stocks are in Stage 2, ${Math.round((n2 / total) * 100)}% of the ${total.toLocaleString("en-IN")} tracked.</h1>
-    <div class="stagebar" role="img" aria-label="Stocks by stage">${[1, 2, 3, 4].map((n) => `<span class="st${n}" style="flex:${sum.stage_counts[n] || 0}"></span>`).join("")}</div>
-    <div class="stagelegend">${[[1, "Base"], [2, "Advancing"], [3, "Topping"], [4, "Declining"]].map(([n, l]) => `<a href="#/stages/${n}"><i class="st${n}"></i>${l} <b>${(sum.stage_counts[n] || 0).toLocaleString("en-IN")}</b><span>${Math.round(((sum.stage_counts[n] || 0) / total) * 100)}%</span></a>`).join("")}</div>
-    <div class="figures">
-      ${B ? `<div><div class="lbl">Health score</div><div class="val">${B.score}</div><div class="sub">${B.label}, out of 100</div></div>
-      <div><div class="lbl">Rising and falling</div><div class="val"><span class="up">${B.adv.toLocaleString("en-IN")}</span> / <span class="down">${B.dec.toLocaleString("en-IN")}</span></div><div class="sub">A/D ratio ${B.ad_ratio ?? "–"}</div></div>
-      <div><div class="lbl">52-week highs and lows</div><div class="val">${B.nh} / ${B.nl}</div><div class="sub">Net ${B.net_highs > 0 ? "+" : ""}${B.net_highs}</div></div>` : ""}
-      <div><div class="lbl">Close to Stage 2</div><div class="val">${sum.candidates.toLocaleString("en-IN")}</div><div class="sub"><a href="#/stages/c">See candidates</a></div></div>
-    </div>
+    <section class="hero-panel">
+      <h1>${B ? `The market is ${B.label.toLowerCase()}. ` : ""}${n2.toLocaleString("en-IN")} stocks are in Stage 2.</h1>
+      <p class="lede">Close of ${day} · ${Math.round((n2 / total) * 100)}% of the ${total.toLocaleString("en-IN")} stocks tracked · tap a stage to see the names.</p>
+      <div class="hero-grid">
+        <div class="stage-cards">${[[1, "Base", "building a base, going sideways"], [2, "Advancing", "established uptrend, near highs"], [3, "Topping", "momentum fading near the top"], [4, "Declining", "below falling averages"]]
+          .map(([n, l, d]) => `<a class="stage-card ${n === 2 ? "on" : ""}" href="#/stages/${n}"><span class="tap">tap to view ›</span><strong>${(sum.stage_counts[n] || 0).toLocaleString("en-IN")}</strong><b><i class="st${n}"></i>${l}</b><em>${d} · ${Math.round(((sum.stage_counts[n] || 0) / total) * 100)}%</em></a>`).join("")}</div>
+        <div class="since">
+          <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 3"/></svg>What changed since the last close?</h3>
+          ${B ? `<a class="since-item" href="#/breadth"><span><b>Market health ${B.score}</b> out of 100: ${B.label.toLowerCase()}.</span><em>›</em></a>
+          <a class="since-item" href="#/breadth"><span><b>${B.adv.toLocaleString("en-IN")} rose, ${B.dec.toLocaleString("en-IN")} fell.</b> Advance/decline ratio ${B.ad_ratio ?? "–"}.</span><em class="${B.adv >= B.dec ? "up" : "down"}">${B.adv >= B.dec ? "+" : "−"}${Math.abs(B.adv - B.dec).toLocaleString("en-IN")}</em></a>
+          <a class="since-item" href="#/breadth"><span><b>${B.nh} new 52-week highs</b> against ${B.nl} new lows.</span><em class="${B.net_highs >= 0 ? "up" : "down"}">${B.net_highs > 0 ? "+" : ""}${B.net_highs}</em></a>` : ""}
+          <a class="since-item" href="#/stages/2"><span><b>${sum.entered_stage2.length} entered Stage 2</b> and ${sum.exited_stage2.length} left it today.</span><em class="${sum.entered_stage2.length >= sum.exited_stage2.length ? "up" : "down"}">${sum.entered_stage2.length - sum.exited_stage2.length > 0 ? "+" : ""}${sum.entered_stage2.length - sum.exited_stage2.length}</em></a>
+          <a class="since-item" href="#/stages/c"><span><b>${sum.candidates.toLocaleString("en-IN")} stocks</b> are close to qualifying for Stage 2.</span><em>›</em></a>
+        </div>
+      </div>
+      <p class="hero-foot">Every NSE and BSE stock, checked after each close · <a href="#/stages/2">see all Stage 2 stocks →</a></p>
+    </section>
     <div class="cols">
       <section class="section"><div class="section-head"><h2>Entered Stage 2 <span class="count">${sum.entered_stage2.length} today</span></h2><a href="#/stages/2">All Stage 2</a></div>
         ${list(sum.entered_stage2, rsVal)}</section>

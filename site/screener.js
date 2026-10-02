@@ -172,7 +172,7 @@ function drawList() {
   st.page = Math.min(st.page, pages - 1);
   const shown = rows.slice(st.page * size, st.page * size + size);
   $("#scr-rows").innerHTML = shown.length ? shown.map((r) => `<tr class="${r.symbol === st.selected ? "on" : ""}" data-s="${esc(r.symbol)}" tabindex="0">
-      <td class="scr-who"><b>${esc(r.symbol)}</b><span>${esc(displayName(r))}</span><small class="${qualified(r) ? "q" : ""}">${qualified(r) ? "Qualified" : "Below threshold"}${capOf(r) == null ? " · market cap n/a" : ""}</small></td>
+      <td class="scr-who"><b>${esc(displayName(r))}</b><span class="tick">${esc(r.symbol)}</span><small class="${qualified(r) ? "q" : ""}">${qualified(r) ? "Qualified" : "Below threshold"}${capOf(r) == null ? " · market cap n/a" : ""}</small></td>
       ${cfg.cols.map((c) => `<td class="${c.num ? "num" : ""}">${c.v(r)}</td>`).join("")}</tr>`).join("")
     : `<tr><td colspan="${cfg.cols.length + 1}" class="empty">No stocks match this view. Try another filter or search.</td></tr>`;
   $("#scr-count").textContent = rows.length ? `${n0(st.page * size + 1)}–${n0(Math.min((st.page + 1) * size, rows.length))} of ${n0(rows.length)} stocks` : "0 stocks";
