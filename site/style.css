@@ -364,3 +364,6 @@ legend { font-size: 12px; font-weight: 600; padding: 0 4px; }
 .checklist label { display: flex; gap: 10px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--rule); cursor: pointer; }
 .checklist input { padding: 0; width: 16px; height: 16px; }
 @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Narrow phones: drop secondary columns so tables fit without sideways scrolling */
+@media (max-width: 480px) { .hide-sm { display: none; } }
