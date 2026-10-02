@@ -69,6 +69,7 @@ def update(end: date | None = None, days: int | None = None) -> pd.DataFrame:
     if new:
         panel = pd.concat([panel, *new], ignore_index=True)
         panel = panel.drop_duplicates(["date", "isin"], keep="last").sort_values(["isin", "date"])
+        panel = trim(panel)
         config.PRICES.parent.mkdir(parents=True, exist_ok=True)
         panel.to_parquet(config.PRICES, index=False)
     # A weekday with no file on either exchange, at least 4 days old, with trading data on a
@@ -83,6 +84,13 @@ def update(end: date | None = None, days: int | None = None) -> pd.DataFrame:
         log.warning("Exchange files unavailable for %s - trying yfinance", recent_fail)
         panel = _yf_patch(panel, min(recent_fail), end)
     return panel
+
+
+def trim(panel: pd.DataFrame, keep: int | None = None) -> pd.DataFrame:
+    """Keep only the latest `keep` trading days so the saved history stays a bounded size."""
+    keep = keep or config.KEEP_DAYS
+    dates = panel["date"].drop_duplicates().nlargest(keep)
+    return panel[panel["date"] >= dates.min()] if len(dates) == keep else panel
 
 
 def rebuild_from_raw() -> pd.DataFrame:

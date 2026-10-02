@@ -16,6 +16,7 @@ HISTORY = DATA / "history"    # daily snapshots (Time Machine)
 # How much history to keep / backfill (trading days). 12M RS needs 252,
 # 40-week MA + slope needs ~45 weeks, RS deltas and RRG trails need a bit more.
 BACKFILL_DAYS = 420
+KEEP_DAYS = 500          # trading days of history kept (keeps the saved file well under GitHub's 100MB limit)
 
 # ---- Universe -----------------------------------------------------------
 NSE_SERIES = ["EQ", "BE", "BZ", "SM", "ST", "IV"]   # priority order; SM/ST = SME boards. Never BL (block-deal window)

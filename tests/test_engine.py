@@ -224,3 +224,13 @@ def test_holidays_remembered_and_bse_not_disabled(tmp_path, monkeypatch):
     assert holidays <= store.closed_days()
     bse_calls.clear(); store.update(end=date(2026, 10, 1))
     assert not (set(bse_calls) & holidays)                                     # holidays not asked again
+
+
+def test_trim_keeps_latest_days():
+    import pandas as pd
+    from engine.store import trim
+    d = pd.bdate_range("2024-01-01", periods=10)
+    p = pd.DataFrame({"date": list(d) * 2, "isin": ["A"] * 10 + ["B"] * 10})
+    out = trim(p, keep=4)
+    assert sorted(out["date"].unique()) == list(d[-4:]) and len(out) == 8
+    assert len(trim(p, keep=50)) == 20
