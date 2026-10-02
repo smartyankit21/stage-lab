@@ -1,0 +1,66 @@
+# Runs every weekday after market close: download prices -> compute -> save data -> publish site.
+name: daily-update
+
+on:
+  schedule:
+    - cron: "45 13 * * 1-5"   # 7:15 pm IST
+    - cron: "15 16 * * 1-5"   # 9:45 pm IST, catches exchange files that were published late
+  workflow_dispatch: {}        # "Run workflow" button for a manual run
+
+permissions:
+  contents: write              # to save the data branch
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      TZ: Asia/Kolkata
+      NETLIFY_SITE_ID: c35745a0-0091-41c0-ba5f-348d1d90c98c
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Check the engine
+        run: python -m pytest -q tests
+
+      - name: Restore saved data (price history, industries, holidays)
+        run: |
+          if git fetch --depth=1 origin data; then git archive FETCH_HEAD | tar -x; fi
+          ls -la data data/meta || echo "No saved data yet - the first run builds the full history"
+
+      - name: Download today's prices and compute
+        run: python -m engine.run_daily
+
+      - name: Save data to the data branch
+        run: |
+          set -e
+          tmp=$(mktemp -d)
+          mkdir -p "$tmp/data"
+          cp data/prices.parquet "$tmp/data/"
+          if [ -f data/indices.parquet ]; then cp data/indices.parquet "$tmp/data/"; fi
+          cp -r data/meta "$tmp/data/"
+          cd "$tmp"
+          git init -q && git checkout -q --orphan data
+          git add -A
+          git -c user.name="stage-lab bot" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Data as of $(date +%F)"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" data
+
+      - name: Publish the website
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then echo "::error::Add the NETLIFY_AUTH_TOKEN secret (see README)"; exit 1; fi
+          npx -y netlify-cli@17 deploy --prod --dir site --no-build --site "$NETLIFY_SITE_ID" --message "Data as of $(date +%F)"

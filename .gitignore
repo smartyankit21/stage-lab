@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+.pytest_cache/
+# generated or local-only
+data/
+site/data/
+reference/
+scratch/
+site_old/
+site_v2/
