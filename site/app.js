@@ -753,7 +753,7 @@ async function route() {
   const parts = path.split("/").filter(Boolean);
   const params = new URLSearchParams(query || "");
   const name = parts[0] || "home";
-  const navName = name === "group" ? "industries" : name === "stock" ? "" : name;
+  const navName = name === "group" ? "industries" : name === "stock" ? "" : name === "screener" ? `screener-${parts[1] === "pdv" ? "pdv" : "match"}` : name;
   document.querySelectorAll("a[data-route]").forEach((a) => a.classList.toggle("active", a.dataset.route === navName));
   $(".side").classList.remove("open");
   view().classList.toggle("wide", name === "screener");

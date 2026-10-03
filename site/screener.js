@@ -92,9 +92,8 @@ window.pageScreener = async function pageScreener(kindArg, params) {
   const info = data.info || {};
   view().innerHTML = `
     <div class="scr-head">
-      <div><p class="eyebrow">Screener</p><h1>${cfg.title}</h1><p class="muted scr-blurb">${cfg.blurb}</p></div>
+      <div><p class="eyebrow">Screens</p><h1>${cfg.title}</h1><p class="muted scr-blurb">${cfg.blurb}</p></div>
       <div class="scr-controls">
-        <label>Screener<select id="scr-kind">${Object.entries(SCREENERS).map(([k, c]) => `<option value="${k}" ${k === kind ? "selected" : ""}>${c.label}</option>`).join("")}</select></label>
         <label>As of<select disabled><option>${longDate(info.asof)}</option></select></label>
         <button type="button" id="scr-export">Export scan</button>
       </div>
@@ -119,7 +118,6 @@ window.pageScreener = async function pageScreener(kindArg, params) {
     </div>
     <div id="scr-below"></div>`;
 
-  $("#scr-kind").onchange = (e) => { location.hash = `#/screener/${e.target.value}`; };
   $("#scr-q").oninput = (e) => { st.q = e.target.value; st.page = 0; drawList(); };
   $("#scr-filter").onchange = (e) => { st.filter = e.target.value; st.page = 0; drawStats(); drawList(); };
   $("#scr-sort").onchange = (e) => { st.sort = e.target.value; drawList(); };
