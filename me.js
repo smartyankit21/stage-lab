@@ -86,6 +86,11 @@ function signInForm(title, intro, mode = "signin") {
         remember();
         const { data, error } = await db().auth.signUp({ email, password: pw, options: { emailRedirectTo: backHere() } });
         if (error) throw error;
+        // Supabase answers "success" but sends nothing when the email already has an account (identities is empty).
+        if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+          say(`<b>${esc(email)}</b> already has an account, so no email was sent. Switch to <b>Sign in</b>. If you have never set a password (for example you used an emailed link before), use <b>Forgot password?</b> there to choose one.`, true);
+          btn.disabled = false; return;
+        }
         if (data.session) { toast("Account created. You're signed in."); renderAccountChip(); route(); }
         else say(`Almost done: we sent a confirmation email to <b>${esc(email)}</b>. Open it once, then sign in here with your password.`);
       } else {
