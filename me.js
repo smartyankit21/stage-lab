@@ -19,23 +19,44 @@ async function currentUser() {
   const { data } = await sb.auth.getSession();
   return data.session?.user || null;
 }
-/* After an emailed link brings you back (?code=...), finish sign-in and return to the page you started from.
-   A password-reset link lands on the "set a new password" form instead. */
+/* Emailed links (confirm email, sign-in link, password reset) come back to the site in one of three ways:
+   ?token_hash=...&type=...  works in any browser or device (the email templates use this),
+   ?code=...                 older style, only works in the browser that asked for the email,
+   ?error=... or #error=...  the link was expired, already used or invalid.
+   Each case ends with a clear message, and a reset link always lands on "Choose a new password". */
+function linkProblem(m) {
+  m = String(m || "");
+  if (/expired|invalid|used|not found|otp/i.test(m)) return "This email link has expired or was already used. Ask for a new one below; the newest email is the one that works.";
+  return `That link didn't work (${m}). Ask for a new one below.`;
+}
 async function finishSignIn() {
   const sb = db();
-  if (sb) sb.auth.onAuthStateChange((event) => {
+  if (!sb) return;
+  sb.auth.onAuthStateChange((event) => {
     if (event === "PASSWORD_RECOVERY") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } }
     renderAccountChip();
   });
-  if (!new URLSearchParams(location.search).has("code") || !sb) { renderAccountChip(); return; }
-  await currentUser();                       // the library swaps the code for a session here
-  let back = "#/watchlist";
-  try {
-    back = localStorage.getItem("afterSignIn") || back; localStorage.removeItem("afterSignIn");
-    if (sessionStorage.getItem("pwRecovery") || localStorage.getItem("pwResetAsked")) { back = "#/account/reset"; localStorage.removeItem("pwResetAsked"); }
-  } catch { /* private mode */ }
+  const q = new URLSearchParams(location.search);
+  const hashErr = location.hash.includes("error=") ? new URLSearchParams(location.hash.slice(location.hash.indexOf("error="))) : null;
+  const err = q.get("error_description") || q.get("error") || hashErr?.get("error_description") || hashErr?.get("error");
+  const tokenHash = q.get("token_hash"), type = q.get("type"), code = q.get("code");
+  if (!err && !tokenHash && !code) { renderAccountChip(); return; }
+  let back = "#/watchlist", note = null, bad = false;
+  try { back = localStorage.getItem("afterSignIn") || back; localStorage.removeItem("afterSignIn"); } catch { /* private mode */ }
+  if (err) { note = linkProblem(err); bad = true; back = "#/account"; }
+  else if (tokenHash) {
+    const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: type || "email" });
+    if (error) { note = linkProblem(error.message); bad = true; back = "#/account"; }
+    else if (type === "recovery") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } back = "#/account/reset"; note = "Link accepted. Now choose your new password."; }
+    else note = type === "signup" || type === "email" ? "Email confirmed. You're signed in." : "You're signed in.";
+  } else {
+    const user = await currentUser();                // the library swaps the code for a session here
+    if (!user) { note = "This sign-in link only works in the browser where you asked for it. Ask for a new one below."; bad = true; back = "#/account"; }
+    else { let rec = false; try { rec = !!sessionStorage.getItem("pwRecovery"); } catch { /* private mode */ } if (rec) back = "#/account/reset"; }
+  }
   history.replaceState(null, "", location.pathname + back);
   renderAccountChip();
+  if (note) setTimeout(() => toast(esc(note), bad), 400);
 }
 const rows = (r) => { if (r.error) throw new Error(r.error.message); return r.data; };
 
@@ -52,9 +73,16 @@ function friendly(error) {
   if (/invalid login credentials/i.test(m)) return "That email and password don't match. Check them, or use “Forgot password?”.";
   if (/email not confirmed/i.test(m)) return "Please confirm your email first: open the link we sent when you created the account.";
   if (/already registered|already exists/i.test(m)) return "An account with this email already exists. Sign in instead, or use “Forgot password?”.";
-  if (/rate|limit|seconds/i.test(m)) return "Too many emails were sent just now. Please try again in a little while.";
+  if (/rate|limit|seconds/i.test(m)) return "Too many emails were sent just now. Please wait a minute and try again; the newest email is the one that works.";
+  if (/signups not allowed|user not found/i.test(m)) return "There's no account with this email yet. Use “Create account” first.";
   if (/password/i.test(m) && /least|short|weak/i.test(m)) return `Choose a longer password (at least ${MIN_PW} characters).`;
   return m;
+}
+/* Email buttons wait a minute between sends (Supabase refuses faster repeats anyway). */
+function cooldown(btn, secs = 60) {
+  if (!btn) return;
+  const label = btn.textContent; btn.disabled = true;
+  const t = setInterval(() => { secs -= 1; btn.textContent = `${label} (${secs}s)`; if (secs <= 0 || !btn.isConnected) { clearInterval(t); btn.disabled = false; btn.textContent = label; } }, 1000);
 }
 function signInForm(title, intro, mode = "signin") {
   const tab = (m, label) => `<a href="#" data-mode="${m}" class="${mode === m ? "on" : ""}">${label}</a>`;
@@ -106,16 +134,16 @@ function signInForm(title, intro, mode = "signin") {
   if (forgot) forgot.onclick = async () => {
     const email = form.email.value.trim();
     if (!/.+@.+\..+/.test(email)) return say("Type your email above first, then tap “Forgot password?”.", true);
-    try { localStorage.setItem("pwResetAsked", "1"); } catch { /* private mode */ }
+    cooldown(forgot);
     const { error } = await db().auth.resetPasswordForEmail(email, { redirectTo: backHere() });
-    say(error ? esc(friendly(error)) : `We sent a reset link to <b>${esc(email)}</b>. Open it on this device to choose a new password.`, !!error);
+    say(error ? esc(friendly(error)) : `We sent a reset link to <b>${esc(email)}</b>. Open the newest email from Stage Lab (check spam too) and tap the link; it works on any device.`, !!error);
   };
   $("#auth-link").onclick = async () => {
     const email = form.email.value.trim();
     if (!/.+@.+\..+/.test(email)) return say("Type your email above first.", true);
-    remember();
-    const { error } = await db().auth.signInWithOtp({ email, options: { emailRedirectTo: backHere() } });
-    say(error ? esc(friendly(error)) : `Sent. Check the inbox for <b>${esc(email)}</b> and tap the link. It works once and expires in an hour.`, !!error);
+    remember(); cooldown($("#auth-link"));
+    const { error } = await db().auth.signInWithOtp({ email, options: { emailRedirectTo: backHere(), shouldCreateUser: false } });
+    say(error ? esc(friendly(error)) : `Sent. Check the inbox for <b>${esc(email)}</b> (and spam) and tap the link. It works once, on any device, for one hour.`, !!error);
   };
 }
 
@@ -197,7 +225,7 @@ function toast(msg, bad = false) {
   t.setAttribute("role", "status");
   t.innerHTML = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
+  setTimeout(() => t.remove(), bad ? 9000 : 3500);
 }
 /* A form in a modal panel. onSubmit(formData) may throw to keep it open. */
 function formDialog(title, body, onSubmit, { submit = "Save", extra = "" } = {}) {
