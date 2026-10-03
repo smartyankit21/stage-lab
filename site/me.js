@@ -8,8 +8,7 @@ function db() {
   const c = window.STAGE_CFG || {};
   if (!SB && c.supabaseUrl && c.supabaseKey && window.supabase) {
     SB = window.supabase.createClient(c.supabaseUrl, c.supabaseKey, {
-      // "implicit": emailed links carry the sign-in in the link itself, so they work in any browser or device
-      // (the "pkce" style only works in the browser that asked for the email).
+      // "implicit": Google sends the sign-in back in the link itself (#access_token=...).
       auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
     });
   }
@@ -21,51 +20,25 @@ async function currentUser() {
   const { data } = await sb.auth.getSession();
   return data.session?.user || null;
 }
-/* Emailed links (confirm email, sign-in link, password reset) come back to the site in one of three ways:
-   ?token_hash=...&type=...  works in any browser or device (the email templates use this),
-   ?code=...                 older style, only works in the browser that asked for the email,
-   ?error=... or #error=...  the link was expired, already used or invalid.
-   Each case ends with a clear message, and a reset link always lands on "Choose a new password". */
-function linkProblem(m) {
-  m = String(m || "");
-  if (/expired|invalid|used|not found|otp/i.test(m)) return "This email link has expired or was already used. Ask for a new one below; the newest email is the one that works.";
-  return `That link didn't work (${m}). Ask for a new one below.`;
-}
+/* Google sign-in comes back to the site as #access_token=... (signed in) or ?error / #error=... (cancelled or failed).
+   The library reads the token from the link; we then clean the address bar and go back to where the person was. */
 async function finishSignIn() {
   const sb = db();
   if (!sb) return;
-  sb.auth.onAuthStateChange((event) => {
-    if (event === "PASSWORD_RECOVERY") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } }
-    renderAccountChip();
-  });
+  sb.auth.onAuthStateChange(() => renderAccountChip());
   const q = new URLSearchParams(location.search);
   const hashErr = location.hash.includes("error=") ? new URLSearchParams(location.hash.slice(location.hash.indexOf("error="))) : null;
   const err = q.get("error_description") || q.get("error") || hashErr?.get("error_description") || hashErr?.get("error");
-  const tokenHash = q.get("token_hash"), code = q.get("code");
-  const hashTok = !err && location.hash.includes("access_token=") ? new URLSearchParams(location.hash.slice(1)) : null;
-  const type = q.get("type") || hashTok?.get("type");
-  if (!err && !tokenHash && !code && !hashTok) { renderAccountChip(); return; }
-  let back = "#/watchlist", note = null, bad = false;
+  const hashTok = !err && location.hash.includes("access_token=");
+  const code = q.get("code");
+  if (!err && !hashTok && !code) { renderAccountChip(); return; }
+  let back = "#/watchlist", note = "You're signed in.", bad = false;
   try { back = localStorage.getItem("afterSignIn") || back; localStorage.removeItem("afterSignIn"); } catch { /* private mode */ }
-  if (err) { note = linkProblem(err); bad = true; back = "#/account"; }
-  else if (tokenHash) {
-    const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type: type || "email" });
-    if (error) { note = linkProblem(error.message); bad = true; back = "#/account"; }
-    else if (type === "recovery") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } back = "#/account/reset"; note = "Link accepted. Now choose your new password."; }
-    else note = type === "signup" || type === "email" ? "Email confirmed. You're signed in." : "You're signed in.";
-  } else if (hashTok) {
-    const user = await currentUser();                // the library reads the sign-in from the link here
-    if (!user) { note = linkProblem("invalid"); bad = true; back = "#/account"; }
-    else if (type === "recovery") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } back = "#/account/reset"; note = "Link accepted. Now choose your new password."; }
-    else note = type === "signup" ? "Email confirmed. You're signed in." : "You're signed in.";
-  } else {
-    const user = await currentUser();                // older-style link: the library swaps the code for a session here
-    if (!user) { note = "This sign-in link only works in the browser where you asked for it. Ask for a new one below."; bad = true; back = "#/account"; }
-    else { let rec = false; try { rec = !!sessionStorage.getItem("pwRecovery"); } catch { /* private mode */ } if (rec) back = "#/account/reset"; }
-  }
+  if (err) { note = /access_denied|cancel/i.test(err) ? "Google sign-in was cancelled." : `Google sign-in didn't work (${err}). Please try again.`; bad = true; back = "#/account"; }
+  else if (!(await currentUser())) { note = "Google sign-in didn't finish. Please try again."; bad = true; back = "#/account"; }
   history.replaceState(null, "", location.pathname + back);
   renderAccountChip();
-  if (note) setTimeout(() => toast(esc(note), bad), 400);
+  setTimeout(() => toast(esc(note), bad), 400);
 }
 const rows = (r) => { if (r.error) throw new Error(r.error.message); return r.data; };
 
@@ -74,127 +47,45 @@ function notConnected(title) {
     Once the Supabase address and public key are added to <code>site/config.js</code>, this page will ask you to sign in.</div>`;
 }
 
-/* ---------- sign in with email and password ---------- */
-const MIN_PW = 8;
-const backHere = () => location.origin + location.pathname;
-function friendly(error) {
-  const m = error?.message || String(error);
-  if (/invalid login credentials/i.test(m)) return "That email and password don't match. Check them, or use “Forgot password?”.";
-  if (/email not confirmed/i.test(m)) return "Please confirm your email first: open the link we sent when you created the account.";
-  if (/already registered|already exists/i.test(m)) return "An account with this email already exists. Sign in instead, or use “Forgot password?”.";
-  if (/rate|limit|seconds/i.test(m)) return "Too many emails were sent just now. Please wait a minute and try again; the newest email is the one that works.";
-  if (/signups not allowed|user not found/i.test(m)) return "There's no account with this email yet. Use “Create account” first.";
-  if (/password/i.test(m) && /least|short|weak/i.test(m)) return `Choose a longer password (at least ${MIN_PW} characters).`;
-  return m;
-}
-/* Email buttons wait a minute between sends (Supabase refuses faster repeats anyway). */
-function cooldown(btn, secs = 60) {
-  if (!btn) return;
-  const label = btn.textContent; btn.disabled = true;
-  const t = setInterval(() => { secs -= 1; btn.textContent = `${label} (${secs}s)`; if (secs <= 0 || !btn.isConnected) { clearInterval(t); btn.disabled = false; btn.textContent = label; } }, 1000);
-}
-function signInForm(title, intro, mode = "signin") {
-  const tab = (m, label) => `<a href="#" data-mode="${m}" class="${mode === m ? "on" : ""}">${label}</a>`;
+/* ---------- sign in with Google ---------- */
+const GOOGLE_G = `<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>`;
+function signInForm(title, intro) {
   view().innerHTML = `<h1>${title}</h1><p class="muted">${intro}</p>
     <div class="auth-card">
-      <nav class="tabs">${tab("signin", "Sign in")}${tab("signup", "Create account")}</nav>
-      <form class="auth-form" id="auth-form" novalidate>
-        <label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
-        <label>Password<input name="password" type="password" required minlength="${MIN_PW}" autocomplete="${mode === "signup" ? "new-password" : "current-password"}" placeholder="${mode === "signup" ? `At least ${MIN_PW} characters` : "Your password"}"></label>
-        ${mode === "signup" ? `<label>Repeat password<input name="password2" type="password" required minlength="${MIN_PW}" autocomplete="new-password"></label>` : ""}
-        <button type="submit" class="primary">${mode === "signup" ? "Create account" : "Sign in"}</button>
-        <p class="auth-msg small" id="auth-msg" role="status"></p>
-      </form>
-      <div class="auth-links">${mode === "signin" ? `<button type="button" class="linkish" id="auth-forgot">Forgot password?</button>` : "<span></span>"}
-        <button type="button" class="linkish" id="auth-link">Email me a one-time sign-in link instead</button></div>
+      <button type="button" class="google-btn" id="google-btn">${GOOGLE_G}<span>Continue with Google</span></button>
+      <p class="auth-msg small" id="auth-msg" role="status"></p>
+      <p class="small muted">No password needed. We only receive your name, email and profile picture from Google, and use your email to keep your watchlist and journal private to you.</p>
     </div>`;
-  document.querySelectorAll(".auth-card [data-mode]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); signInForm(title, intro, a.dataset.mode); addEyebrow((location.hash.split("?")[0].split("/")[1]) || ""); }));
-  const form = $("#auth-form"), msg = $("#auth-msg"), say = (h, bad) => { msg.innerHTML = h; msg.className = `auth-msg small ${bad ? "down" : ""}`; };
-  const remember = () => { try { localStorage.setItem("afterSignIn", location.hash && !location.hash.startsWith("#/account") ? location.hash : "#/watchlist"); } catch { /* private mode */ } };
-  form.onsubmit = async (e) => {
-    e.preventDefault();
-    const email = form.email.value.trim(), pw = form.password.value, btn = $("button[type=submit]", form);
-    if (!email || !/.+@.+\..+/.test(email)) return say("Enter a valid email address.", true);
-    if (pw.length < MIN_PW) return say(`Passwords need at least ${MIN_PW} characters.`, true);
-    if (mode === "signup" && pw !== form.password2.value) return say("The two passwords don't match.", true);
-    btn.disabled = true;
-    try {
-      if (mode === "signup") {
-        remember();
-        const { data, error } = await db().auth.signUp({ email, password: pw, options: { emailRedirectTo: backHere() } });
-        if (error) throw error;
-        // Supabase answers "success" but sends nothing when the email already has an account (identities is empty).
-        if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-          say(`<b>${esc(email)}</b> already has an account, so no email was sent. Switch to <b>Sign in</b>. If you have never set a password (for example you used an emailed link before), use <b>Forgot password?</b> there to choose one.`, true);
-          btn.disabled = false; return;
-        }
-        if (data.session) { toast("Account created. You're signed in."); renderAccountChip(); route(); }
-        else say(`Almost done: we sent a confirmation email to <b>${esc(email)}</b>. Open it once, then sign in here with your password.`);
-      } else {
-        const { error } = await db().auth.signInWithPassword({ email, password: pw });
-        if (error) throw error;
-        toast("Signed in."); renderAccountChip();
-        if (location.hash.startsWith("#/account")) location.hash = "#/watchlist"; else route();
-      }
-    } catch (x) { say(esc(friendly(x)), true); }
-    btn.disabled = false;
-  };
-  const forgot = $("#auth-forgot");
-  if (forgot) forgot.onclick = async () => {
-    const email = form.email.value.trim();
-    if (!/.+@.+\..+/.test(email)) return say("Type your email above first, then tap “Forgot password?”.", true);
-    cooldown(forgot);
-    const { error } = await db().auth.resetPasswordForEmail(email, { redirectTo: backHere() });
-    say(error ? esc(friendly(error)) : `We sent a reset link to <b>${esc(email)}</b>. Open the newest email from Stage Lab (check spam too) and tap the link; it works on any device.`, !!error);
-  };
-  $("#auth-link").onclick = async () => {
-    const email = form.email.value.trim();
-    if (!/.+@.+\..+/.test(email)) return say("Type your email above first.", true);
-    remember(); cooldown($("#auth-link"));
-    const { error } = await db().auth.signInWithOtp({ email, options: { emailRedirectTo: backHere(), shouldCreateUser: false } });
-    say(error ? esc(friendly(error)) : `Sent. Check the inbox for <b>${esc(email)}</b> (and spam) and tap the link. It works once, on any device, for one hour.`, !!error);
+  const btn = $("#google-btn"), msg = $("#auth-msg");
+  btn.onclick = async () => {
+    try { localStorage.setItem("afterSignIn", location.hash && !location.hash.startsWith("#/account") ? location.hash : "#/watchlist"); } catch { /* private mode */ }
+    btn.disabled = true; msg.textContent = "Opening Google…"; msg.className = "auth-msg small";
+    const { error } = await db().auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: "select_account" } } });
+    if (error) { btn.disabled = false; msg.textContent = /not enabled|provider/i.test(error.message) ? "Google sign-in isn't switched on yet. Please try again later." : error.message; msg.className = "auth-msg small down"; }
   };
 }
+const nameOf = (u) => u?.user_metadata?.full_name || u?.user_metadata?.name || u?.email || "";
+const picOf = (u) => u?.user_metadata?.avatar_url || u?.user_metadata?.picture || "";
+const avatarHtml = (u) => picOf(u)
+  ? `<img class="avatar" src="${esc(picOf(u))}" alt="" referrerpolicy="no-referrer">`
+  : `<span class="avatar">${esc((nameOf(u) || "?")[0].toUpperCase())}</span>`;
 
-/* ---------- account page: sign in / create account, change password, sign out ---------- */
-async function pageAccount(sub) {
+/* ---------- account page ---------- */
+async function pageAccount() {
   if (!db()) { notConnected("Account"); return; }
   const user = await currentUser();
-  let recovering = sub === "reset";
-  try { if (sessionStorage.getItem("pwRecovery")) recovering = true; } catch { /* private mode */ }
-  if (!user) { signInForm("Account", "Sign in to save your watchlists and trade journal. They sync across your phone and laptop."); return; }
-  view().innerHTML = `<h1>${recovering ? "Choose a new password" : "Your account"}</h1>
-    <p class="muted">Signed in as <b>${esc(user.email)}</b>.</p>
-    <div class="auth-card">
-      <h2>${recovering ? "New password" : "Change password"}</h2>
-      <form class="auth-form" id="pw-form" novalidate>
-        <label>New password<input name="password" type="password" minlength="${MIN_PW}" autocomplete="new-password" placeholder="At least ${MIN_PW} characters"></label>
-        <label>Repeat new password<input name="password2" type="password" minlength="${MIN_PW}" autocomplete="new-password"></label>
-        <button type="submit" class="primary">Save password</button>
-        <p class="auth-msg small" id="pw-msg" role="status"></p>
-      </form>
-    </div>
+  if (!user) { signInForm("Account", "Sign in with your Google account to save your watchlists and trade journal. They sync across your phone and laptop."); return; }
+  view().innerHTML = `<h1>Your account</h1>
+    <div class="auth-card acct-card">${avatarHtml(user)}<div><b>${esc(nameOf(user))}</b><br><span class="muted small">${esc(user.email || "")} · signed in with Google</span></div></div>
     <div class="stat-cards two" style="margin-top:18px">
       <a class="stat-card" href="#/watchlist"><span>Your lists</span><strong>Watchlist</strong><small>Stocks you are following</small><em class="tap">open ›</em></a>
       <a class="stat-card" href="#/journal"><span>Your trades</span><strong>Journal</strong><small>Entries, exits and results</small><em class="tap">open ›</em></a>
     </div>
     <p style="margin-top:18px"><button type="button" data-signout>Sign out</button></p>`;
-  const f = $("#pw-form"), m = $("#pw-msg");
-  f.onsubmit = async (e) => {
-    e.preventDefault();
-    const pw = f.password.value;
-    if (pw.length < MIN_PW) { m.innerHTML = `<span class="down">Passwords need at least ${MIN_PW} characters.</span>`; return; }
-    if (pw !== f.password2.value) { m.innerHTML = `<span class="down">The two passwords don't match.</span>`; return; }
-    const { error } = await db().auth.updateUser({ password: pw });
-    if (error) { m.innerHTML = `<span class="down">${esc(friendly(error))}</span>`; return; }
-    try { sessionStorage.removeItem("pwRecovery"); } catch { /* private mode */ }
-    f.reset(); m.innerHTML = "Saved. Use this password next time you sign in.";
-    toast("Password saved.");
-  };
   wireSignOut();
 }
 
-/* ---------- top-bar account button: "Sign in", or your initial with a small menu ---------- */
+/* ---------- top-bar account button: "Sign in", or your Google picture with a small menu ---------- */
 async function renderAccountChip() {
   const box = document.getElementById("acct");
   if (!box) return;
@@ -203,13 +94,12 @@ async function renderAccountChip() {
     box.innerHTML = `<a href="#/account" class="nav-btn acct-signin" data-route="account">Sign in</a>`;
     return;
   }
-  const initial = esc((user.email || "?")[0].toUpperCase());
-  box.innerHTML = `<div class="nav-group"><button type="button" class="nav-btn acct-chip" aria-haspopup="true" aria-label="Account"><span class="avatar">${initial}</span><span class="acct-mail">${esc(user.email)}</span></button>
+  box.innerHTML = `<div class="nav-group"><button type="button" class="nav-btn acct-chip" aria-haspopup="true" aria-label="Account">${avatarHtml(user)}<span class="acct-mail">${esc(nameOf(user))}</span></button>
     <div class="menu menu-right">
       <a href="#/watchlist" class="menu-item"><span><b>Watchlist</b><small>stocks you follow</small></span><i aria-hidden="true">›</i></a>
       <a href="#/journal" class="menu-item"><span><b>Journal</b><small>your trades</small></span><i aria-hidden="true">›</i></a>
-      <a href="#/account" class="menu-item"><span><b>Account</b><small>change password</small></span><i aria-hidden="true">›</i></a>
-      <button type="button" class="menu-item menu-btn" data-signout><span><b>Sign out</b><small>${esc(user.email)}</small></span></button>
+      <a href="#/account" class="menu-item"><span><b>Account</b><small>${esc(user.email || "")}</small></span><i aria-hidden="true">›</i></a>
+      <button type="button" class="menu-item menu-btn" data-signout><span><b>Sign out</b><small>${esc(user.email || "")}</small></span></button>
     </div></div>`;
   wireSignOut();
 }
