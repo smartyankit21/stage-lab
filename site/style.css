@@ -644,3 +644,25 @@ button.primary:hover, .btn.primary:hover, button[type="submit"]:not(.ghost):hove
 .scr-toolbar select { min-width: 0; flex: 1 1 auto; }
 .scr-toolbar input[type=search] { flex: 1 1 110px; min-width: 90px; }
 @media (max-width: 1100px) { .scr-toolbar { flex-wrap: wrap; } }
+
+/* ============ account: sign in / create account ============ */
+.acct { flex: none; }
+.acct-signin { background: var(--accent); color: #fff !important; font-weight: 600; }
+.acct-signin:hover { background: var(--accent-ink) !important; color: #fff; }
+.acct-chip { gap: 8px; padding: 0 10px 0 4px; border: 1px solid var(--rule-strong); border-radius: 999px; }
+.avatar { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; }
+.acct-mail { max-width: 160px; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.menu-btn { width: 100%; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
+.auth-card { max-width: 440px; border: 1px solid var(--rule-strong); border-radius: 16px; padding: 18px 20px; background: var(--bg); }
+.auth-card h2 { font-size: 16px; }
+.auth-card .tabs { margin: 0 0 14px; }
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.auth-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
+.auth-form input { padding: 9px 12px; font-size: 15px; }
+.auth-form button[type=submit] { padding: 9px 12px; font-size: 15px; }
+.auth-msg { margin: 0; min-height: 1.2em; }
+.auth-links { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; }
+button.linkish { border: 0; background: none; padding: 0; color: var(--accent-ink); font-weight: 600; font-size: 13px; cursor: pointer; }
+button.linkish:hover { text-decoration: underline; background: none; }
+@media (max-width: 1100px) { .acct-mail { display: none; } .acct-chip { padding: 0 4px; } }
+@media (max-width: 860px) { .side.open .acct { order: -1; } }

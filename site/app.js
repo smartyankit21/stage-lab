@@ -738,7 +738,7 @@ function pageSoon(title, what) {
 
 /* ---------- page heading: the same small green section label above every page title ---------- */
 const SECTION_OF = { breadth: "Market", industries: "Market", stages: "Screens", rs: "Screens", setups: "Screens", history: "Screens",
-  watchlist: "Your lists", journal: "Your lists" };
+  watchlist: "Your lists", journal: "Your lists", account: "Your account" };
 function addEyebrow(name) {
   const label = SECTION_OF[name];
   const h1 = $("#view h1");
@@ -771,6 +771,7 @@ async function route() {
     else if (name === "setups") await pageSetups(params);
     else if (name === "watchlist") await pageWatchlist(parts[1]);
     else if (name === "journal") await pageJournal(parts[1], parts[2], params);
+    else if (name === "account") await pageAccount(parts[1]);
     else pageSoon("Page not found", `There's no page at this address. <a href="#/">Go to the market overview</a>.`);
     addEyebrow(name);
     if (name === "stages" && params.get("ind")) { const sel = $("#fi"); if (sel) { sel.value = params.get("ind"); sel.dispatchEvent(new Event("input")); } }
