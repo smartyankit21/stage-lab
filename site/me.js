@@ -8,7 +8,9 @@ function db() {
   const c = window.STAGE_CFG || {};
   if (!SB && c.supabaseUrl && c.supabaseKey && window.supabase) {
     SB = window.supabase.createClient(c.supabaseUrl, c.supabaseKey, {
-      auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
+      // "implicit": emailed links carry the sign-in in the link itself, so they work in any browser or device
+      // (the "pkce" style only works in the browser that asked for the email).
+      auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
     });
   }
   return SB;
@@ -39,8 +41,10 @@ async function finishSignIn() {
   const q = new URLSearchParams(location.search);
   const hashErr = location.hash.includes("error=") ? new URLSearchParams(location.hash.slice(location.hash.indexOf("error="))) : null;
   const err = q.get("error_description") || q.get("error") || hashErr?.get("error_description") || hashErr?.get("error");
-  const tokenHash = q.get("token_hash"), type = q.get("type"), code = q.get("code");
-  if (!err && !tokenHash && !code) { renderAccountChip(); return; }
+  const tokenHash = q.get("token_hash"), code = q.get("code");
+  const hashTok = !err && location.hash.includes("access_token=") ? new URLSearchParams(location.hash.slice(1)) : null;
+  const type = q.get("type") || hashTok?.get("type");
+  if (!err && !tokenHash && !code && !hashTok) { renderAccountChip(); return; }
   let back = "#/watchlist", note = null, bad = false;
   try { back = localStorage.getItem("afterSignIn") || back; localStorage.removeItem("afterSignIn"); } catch { /* private mode */ }
   if (err) { note = linkProblem(err); bad = true; back = "#/account"; }
@@ -49,8 +53,13 @@ async function finishSignIn() {
     if (error) { note = linkProblem(error.message); bad = true; back = "#/account"; }
     else if (type === "recovery") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } back = "#/account/reset"; note = "Link accepted. Now choose your new password."; }
     else note = type === "signup" || type === "email" ? "Email confirmed. You're signed in." : "You're signed in.";
+  } else if (hashTok) {
+    const user = await currentUser();                // the library reads the sign-in from the link here
+    if (!user) { note = linkProblem("invalid"); bad = true; back = "#/account"; }
+    else if (type === "recovery") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } back = "#/account/reset"; note = "Link accepted. Now choose your new password."; }
+    else note = type === "signup" ? "Email confirmed. You're signed in." : "You're signed in.";
   } else {
-    const user = await currentUser();                // the library swaps the code for a session here
+    const user = await currentUser();                // older-style link: the library swaps the code for a session here
     if (!user) { note = "This sign-in link only works in the browser where you asked for it. Ask for a new one below."; bad = true; back = "#/account"; }
     else { let rec = false; try { rec = !!sessionStorage.getItem("pwRecovery"); } catch { /* private mode */ } if (rec) back = "#/account/reset"; }
   }
