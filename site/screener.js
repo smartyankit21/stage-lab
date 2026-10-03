@@ -209,7 +209,20 @@ async function select(symbol, { scroll }) {
   st.detail = r;
   st.cleanups.splice(0).forEach((f) => { try { f(); } catch { /* already gone */ } });
   if (st.kind === "match") renderMatch(r, item); else renderDaily(r, item);
+  stageLine(item, symbol).catch(() => {});
   if (scroll && window.innerWidth < 1100) box.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+}
+
+/* Stage 2 summary from Stage Lab, so the panel shows the same things as the full stock page. */
+async function stageLine(item, symbol) {
+  if (!item.page) return;
+  const all = await load("stocks.json");
+  const s = all.find((x) => x.file === item.page);
+  if (!s || st.selected !== symbol) return;
+  const box = $(".scr-dhead");
+  if (!box) return;
+  box.insertAdjacentHTML("afterend", `<a class="scr-stage" href="#/stock/${encodeURIComponent(item.page)}">
+    <span>Stage ${s.stage ?? "–"}${s.candidate ? " · candidate" : ""}</span><span>Stage 2 checklist <b>${s.rules_met} / 8</b></span><span>RS 12M <b>${s.rs12 ?? "–"}</b></span><span class="tap">Full stock page ›</span></a>`);
 }
 
 function header(r, item, scoreText) {
@@ -218,7 +231,7 @@ function header(r, item, scoreText) {
       <div><h2 class="scr-sym">${esc(displayName(item))} <span class="tick">${esc(r.symbol)}</span></h2><p class="muted small">${longDate(r.latest.date)}</p><p class="small">${capLine(r)}</p></div>
       <div class="scr-score"><strong>${scoreText}</strong><span class="${qualified(r) ? "q" : "muted"}">${qualified(r) ? "Qualified" : "Below threshold"}</span></div>
     </div>
-    <div class="scr-actions"><button type="button" id="scr-watch">Watch</button><a class="btn" href="#/journal/new?s=${encodeURIComponent("NSE:" + r.symbol)}">Log a trade</a>${pageLink}<button type="button" id="scr-dl">Download Excel-compatible analysis</button></div>`;
+    <div class="scr-actions"><button type="button" id="scr-watch">Watch</button><a class="btn" href="#/journal/new?s=${encodeURIComponent("NSE:" + r.symbol)}">Log a trade</a><button type="button" id="scr-dl">Download Excel-compatible analysis</button></div>`;
 }
 
 function wireHeader(r, filename) {
