@@ -397,13 +397,13 @@ async function pageGroup(level, name) {
   if (!g || !members.length) { view().innerHTML = `<h1>Group not found</h1><p><a href="#/industries">Back to industries</a></p>`; return; }
   const parent = level !== "sector" ? members[0].sector : null;
   const byStage = [2, 1, 3, 4].map((n) => [n, members.filter((s) => s.stage === n).length]);
-  view().innerHTML = `<p class="muted"><a href="#/industries?level=${level}">${LEVELS[level]}</a>${parent ? `, part of <a href="${groupLink("sector", parent)}">${esc(parent)}</a>` : ""}</p>
+  view().innerHTML = `<p class="eyebrow"><a href="#/industries?level=${level}">${LEVELS[level]}</a>${parent ? ` · part of <a href="${groupLink("sector", parent)}">${esc(parent)}</a>` : ""}</p>
     <h1>${esc(name)}</h1>
     <p class="muted">Ranked ${g.rank} of ${g.total_groups} ${LEVELS[level].toLowerCase()} by average ${rsLabel()}.</p>
-    <div class="grid3">
-      <section class="panel"><h2>Average ${rsLabel()}</h2><p class="big">${g.avg_rs.toFixed(0)}</p><p class="muted small">${fmt.chg(g.rs_change_wow)} this week, ${fmt.chg(g.rs_change_5w)} over five weeks</p></section>
-      <section class="panel"><h2>In Stage 2</h2><p class="big">${g.stage2_pct.toFixed(0)}%</p><p class="muted small">${byStage.map(([n, c]) => `${c} in Stage ${n}`).join(", ")}</p></section>
-      <section class="panel"><h2>Stocks</h2><p class="big">${members.length}</p><p class="muted small">${members.filter((s) => s.candidate).length} close to Stage 2</p></section>
+    <div class="stat-cards">
+      <div class="stat-card"><span>Average ${rsLabel()}</span><strong>${g.avg_rs.toFixed(0)}</strong><small>${fmt.chg(g.rs_change_wow)} this week, ${fmt.chg(g.rs_change_5w)} over five weeks</small></div>
+      <div class="stat-card"><span>In Stage 2</span><strong>${g.stage2_pct.toFixed(0)}%</strong><small>${byStage.map(([n, c]) => `${c} in Stage ${n}`).join(", ")}</small></div>
+      <div class="stat-card"><span>Stocks</span><strong>${members.length}</strong><small>${members.filter((s) => s.candidate).length} close to Stage 2</small></div>
     </div>
     <div id="tbl" style="margin-top:20px"></div>`;
   stockTable($("#tbl"), members, [COL.name, COL.spark, COL.stage, COL.close, COL.chg, COL.rs(), COL.rsd30, off(COL.rsd7), off(COL.offHigh), off(COL.industry), off(COL.mcap), off(COL.turnover)], { id: "group" });
@@ -418,9 +418,10 @@ async function pageHistory() {
   const big = rows.filter((r) => r.peak_pct >= 50).length;
   view().innerHTML = `<h1>Stage 2 history</h1>
     <p class="muted">Every completed Stage 2 run in the stored history: when it started, when it ended, and the best gain along the way. Weekly, on Friday closes; runs shorter than two weeks are left out.</p>
-    <div class="grid2" style="margin-top:12px">
-      <section class="panel"><h2>${rows.length.toLocaleString("en-IN")} runs</h2><p class="muted">Average peak gain ${avg("peak_pct").toFixed(1)}%, reached in ${avg("weeks_to_peak").toFixed(1)} weeks on average.</p></section>
-      <section class="panel"><h2>${((big / (rows.length || 1)) * 100).toFixed(1)}% big winners</h2><p class="muted">${big} runs peaked 50% or more above entry. Average run lasted ${avg("weeks").toFixed(1)} weeks.</p></section>
+    <div class="stat-cards">
+      <div class="stat-card"><span>Completed runs</span><strong>${rows.length.toLocaleString("en-IN")}</strong><small>Average run lasted ${avg("weeks").toFixed(1)} weeks</small></div>
+      <div class="stat-card"><span>Average peak gain</span><strong>${avg("peak_pct").toFixed(1)}%</strong><small>reached in ${avg("weeks_to_peak").toFixed(1)} weeks on average</small></div>
+      <div class="stat-card"><span>Big winners</span><strong>${((big / (rows.length || 1)) * 100).toFixed(1)}%</strong><small>${big} runs peaked 50% or more above entry</small></div>
     </div>
     <div class="toolbar"><label>Search<input type="search" id="hq" placeholder="Name or symbol"></label></div><div id="tbl"></div>`;
   const cols = [COL.name,
@@ -453,17 +454,17 @@ async function pageStock(file) {
   const crumbs = s.industry !== "Unclassified" ? [["sector", s.sector], ["industry", s.industry], ...(s.basic_industry !== s.industry ? [["basic_industry", s.basic_industry]] : [])]
     .map(([l, n]) => `<a href="${groupLink(l, n)}">${esc(n)}</a>`).join(" / ") : "";
   view().innerHTML = `
-    <p class="dateline"><a href="javascript:history.back()">Back</a></p>
-    <div class="stock-title"><h1>${esc(sym(s.key))}</h1><span class="muted">${esc(nice(s.name, s.key))}</span>
+    <p class="eyebrow"><a href="javascript:history.back()" class="back">← Back</a> · Stock · ${esc(s.exchange)}</p>
+    <div class="stock-title"><h1>${esc(nice(s.name, s.key))}</h1><span class="tick big-tick">${esc(sym(s.key))}</span>
       <span class="stock-actions"><button type="button" id="btn-watch" aria-pressed="false">Watch</button><a class="btn" href="#/journal/new?s=${encodeURIComponent(s.key)}">Log a trade</a></span></div>
-    <p class="muted small" style="margin:0 0 18px">${esc(s.exchange)}${crumbs ? `, ${crumbs}` : ""}</p>
+    ${crumbs ? `<p class="crumbs">${crumbs}</p>` : ""}
     <div class="stock-head"><div class="px">${fmt.px(s.close)}</div><div class="big" style="margin:0">${fmt.pct(s.chg_pct)}</div><div>${fmt.stage(s.stage, s.candidate)}</div></div>
     <p class="summary">${stockSummary(s)}</p>
-    <div class="facts">
-      <div><span>RS 12M</span>${fmt.int(s.rs12)}</div><div><span>RS 3M</span>${fmt.int(s.rs3)}</div>
-      <div><span>52-week range</span>${fmt.px(s.l52)} – ${fmt.px(s.h52)}</div>
-      ${s.stage === 2 ? `<div><span>Stage 2 entry</span>${fmt.date(s.s2_entry_date)} at ${fmt.px(s.s2_entry_price)} (${fmt.pct(s._fromEntry)})</div>` : ""}
-      <div><span>Market cap</span>${fmt.cr(s.mcap_cr)}</div><div><span>P/E</span>${s.pe == null ? "–" : s.pe.toFixed(1)}</div><div><span>Turnover</span>${fmt.cr(s.turnover_cr)} a day</div>
+    <div class="stat-cards mini">
+      <div class="stat-card"><span>RS 12M</span><strong>${fmt.int(s.rs12)}</strong></div><div class="stat-card"><span>RS 3M</span><strong>${fmt.int(s.rs3)}</strong></div>
+      <div class="stat-card"><span>52-week range</span><strong>${fmt.px(s.l52)} – ${fmt.px(s.h52)}</strong></div>
+      ${s.stage === 2 ? `<div class="stat-card"><span>Stage 2 entry</span><strong>${fmt.px(s.s2_entry_price)}</strong><small>${fmt.date(s.s2_entry_date)} · ${fmt.pct(s._fromEntry)}</small></div>` : ""}
+      <div class="stat-card"><span>Market cap</span><strong>${fmt.cr(s.mcap_cr)}</strong></div><div class="stat-card"><span>P/E</span><strong>${s.pe == null ? "–" : s.pe.toFixed(1)}</strong></div><div class="stat-card"><span>Turnover a day</span><strong>${fmt.cr(s.turnover_cr)}</strong></div>
     </div>
     <div class="chart-head" style="margin-top:28px"><div class="legend" style="margin:0"><span><i style="background:var(--c1)"></i>50-day</span><span><i style="background:var(--c2)"></i>150-day</span><span><i style="background:var(--c3)"></i>200-day</span><span>Strip at the bottom shows the stage</span></div><div class="ranges" id="rng"></div></div>
     <div id="pchart" class="chart"></div>
@@ -612,15 +613,15 @@ async function pageBreadth(params) {
         <p class="muted small">The score is the plain average of these three parts, each on a 0–100 scale.</p>
       </div>
     </section>
-    <div class="grid3">
-      <section class="panel"><h2>Advancing vs declining</h2>
-        <p class="big"><span class="up">${L.adv.toLocaleString("en-IN")}</span> rose, <span class="down">${L.dec.toLocaleString("en-IN")}</span> fell</p>
+    <div class="stat-cards">
+      <div class="stat-card"><span>Advancing vs declining</span>
+        <strong><span class="up">${L.adv.toLocaleString("en-IN")}</span> rose, <span class="down">${L.dec.toLocaleString("en-IN")}</span> fell</strong>
         <div class="split" role="img" aria-label="${advPct.toFixed(0)}% of moving stocks rose"><span class="upbg" style="width:${advPct}%"></span><span class="downbg"></span></div>
-        <p class="muted small">A/D ratio ${L.ad_ratio ?? "–"}</p></section>
-      <section class="panel"><h2>52-week highs and lows</h2>
-        <p class="big"><span class="up">${L.nh}</span> highs, <span class="down">${L.nl}</span> lows</p>
-        <p class="muted small">Net ${L.net_highs > 0 ? "+" : ""}${L.net_highs}</p></section>
-      <section class="panel"><h2>In Stage 2</h2><p class="big">${L.stage2_pct}%</p><p class="muted small">of stocks are in an established uptrend</p></section>
+        <small>A/D ratio ${L.ad_ratio ?? "–"}</small></div>
+      <div class="stat-card"><span>52-week highs and lows</span>
+        <strong><span class="up">${L.nh}</span> highs, <span class="down">${L.nl}</span> lows</strong>
+        <small>Net ${L.net_highs > 0 ? "+" : ""}${L.net_highs}</small></div>
+      <div class="stat-card"><span>In Stage 2</span><strong>${L.stage2_pct}%</strong><small>of stocks are in an established uptrend</small></div>
     </div>
     <div class="chart-head section"><h2 style="margin:0">History</h2><div class="ranges" id="rng"></div></div>
     <div class="grid2 charts" style="margin-top:12px">
@@ -685,9 +686,9 @@ async function pageSetups(params) {
   const link = (o) => { const q = new URLSearchParams({ p: pat, s: st, v: mode, ...o }); return `#/setups?${q}`; };
   view().innerHTML = `<h1>Chart setups</h1>
     <p class="muted">Stocks pausing after a run, found automatically as of ${fmt.date(su.date)}. A pattern is a starting point for your own chart review, not a signal on its own.</p>
-    <div class="cards">${["vcp", "htf"].map((p) => `<a class="card ${p === pat ? "on" : ""}" href="${link({ p, s: "forming" })}">
-      <b>${PATTERN[p]}</b><span class="big">${count(p)}</span>
-      <span class="muted small">${p === "vcp" ? "A rounded base with pullbacks that get smaller, ending in a tight pause near the top." : "A sharp run of 60% or more, then a short, shallow pause near the highs."}</span></a>`).join("")}</div>
+    <div class="stat-cards two">${["vcp", "htf"].map((p) => `<a class="stat-card ${p === pat ? "on" : ""}" href="${link({ p, s: "forming" })}">
+      <span>${PATTERN[p]}</span><strong>${count(p)}</strong>
+      <small>${p === "vcp" ? "A rounded base with pullbacks that get smaller, ending in a tight pause near the top." : "A sharp run of 60% or more, then a short, shallow pause near the highs."}</small><em class="tap">tap to view ›</em></a>`).join("")}</div>
     <nav class="tabs">${Object.keys(STATUS).map((s) => `<a href="${link({ s })}" class="${s === st ? "on" : ""}">${STATUS[s]}<span class="count">${count(pat, s)}</span></a>`).join("")}
       <span class="tabs-right"><a href="${link({ v: "table" })}" class="${mode === "table" ? "on" : ""}">Table</a><a href="${link({ v: "charts" })}" class="${mode === "charts" ? "on" : ""}">Charts</a></span></nav>
     <p class="muted small" style="margin-top:10px">${STATUS_HELP[st]}</p>
@@ -735,6 +736,17 @@ function pageSoon(title, what) {
   view().innerHTML = `<h1>${title}</h1><div class="notice">${what}</div>`;
 }
 
+/* ---------- page heading: the same small green section label above every page title ---------- */
+const SECTION_OF = { breadth: "Market", industries: "Market", stages: "Screens", rs: "Screens", setups: "Screens", history: "Screens",
+  watchlist: "Your lists", journal: "Your lists" };
+function addEyebrow(name) {
+  const label = SECTION_OF[name];
+  const h1 = $("#view h1");
+  if (!label || !h1 || $("#view .eyebrow")) return;
+  const host = h1.closest(".section-head, .stock-title") || h1;
+  host.insertAdjacentHTML("beforebegin", `<p class="eyebrow">${label}</p>`);
+}
+
 /* ---------- router ---------- */
 async function route() {
   const [path, query] = location.hash.replace(/^#/, "").split("?");
@@ -760,6 +772,7 @@ async function route() {
     else if (name === "watchlist") await pageWatchlist(parts[1]);
     else if (name === "journal") await pageJournal(parts[1], parts[2], params);
     else pageSoon("Page not found", `There's no page at this address. <a href="#/">Go to the market overview</a>.`);
+    addEyebrow(name);
     if (name === "stages" && params.get("ind")) { const sel = $("#fi"); if (sel) { sel.value = params.get("ind"); sel.dispatchEvent(new Event("input")); } }
   } catch (e) {
     view().innerHTML = `<h1>Data didn't load</h1><p>${esc(e.message)}. Run the engine to produce today's files, then reload.</p>`;
