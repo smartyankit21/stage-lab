@@ -19,13 +19,23 @@ async function currentUser() {
   const { data } = await sb.auth.getSession();
   return data.session?.user || null;
 }
-/* After the emailed link brings you back (?code=...), finish sign-in and return to the page you started from. */
+/* After an emailed link brings you back (?code=...), finish sign-in and return to the page you started from.
+   A password-reset link lands on the "set a new password" form instead. */
 async function finishSignIn() {
-  if (!new URLSearchParams(location.search).has("code") || !db()) return;
+  const sb = db();
+  if (sb) sb.auth.onAuthStateChange((event) => {
+    if (event === "PASSWORD_RECOVERY") { try { sessionStorage.setItem("pwRecovery", "1"); } catch { /* private mode */ } }
+    renderAccountChip();
+  });
+  if (!new URLSearchParams(location.search).has("code") || !sb) { renderAccountChip(); return; }
   await currentUser();                       // the library swaps the code for a session here
   let back = "#/watchlist";
-  try { back = localStorage.getItem("afterSignIn") || back; localStorage.removeItem("afterSignIn"); } catch { /* private mode */ }
+  try {
+    back = localStorage.getItem("afterSignIn") || back; localStorage.removeItem("afterSignIn");
+    if (sessionStorage.getItem("pwRecovery") || localStorage.getItem("pwResetAsked")) { back = "#/account/reset"; localStorage.removeItem("pwResetAsked"); }
+  } catch { /* private mode */ }
   history.replaceState(null, "", location.pathname + back);
+  renderAccountChip();
 }
 const rows = (r) => { if (r.error) throw new Error(r.error.message); return r.data; };
 
@@ -34,24 +44,132 @@ function notConnected(title) {
     Once the Supabase address and public key are added to <code>site/config.js</code>, this page will ask you to sign in.</div>`;
 }
 
-function signInForm(title, intro) {
+/* ---------- sign in with email and password ---------- */
+const MIN_PW = 8;
+const backHere = () => location.origin + location.pathname;
+function friendly(error) {
+  const m = error?.message || String(error);
+  if (/invalid login credentials/i.test(m)) return "That email and password don't match. Check them, or use “Forgot password?”.";
+  if (/email not confirmed/i.test(m)) return "Please confirm your email first: open the link we sent when you created the account.";
+  if (/already registered|already exists/i.test(m)) return "An account with this email already exists. Sign in instead, or use “Forgot password?”.";
+  if (/rate|limit|seconds/i.test(m)) return "Too many emails were sent just now. Please try again in a little while.";
+  if (/password/i.test(m) && /least|short|weak/i.test(m)) return `Choose a longer password (at least ${MIN_PW} characters).`;
+  return m;
+}
+function signInForm(title, intro, mode = "signin") {
+  const tab = (m, label) => `<a href="#" data-mode="${m}" class="${mode === m ? "on" : ""}">${label}</a>`;
   view().innerHTML = `<h1>${title}</h1><p class="muted">${intro}</p>
-    <form class="signin" id="signin">
-      <label>Your email<input type="email" required autocomplete="email" placeholder="you@example.com"></label>
-      <button type="submit" class="primary">Email me a sign-in link</button>
-    </form>
-    <p class="muted small" id="signin-msg">No password needed. Open the link on this same device and browser.</p>`;
-  $("#signin").onsubmit = async (e) => {
+    <div class="auth-card">
+      <nav class="tabs">${tab("signin", "Sign in")}${tab("signup", "Create account")}</nav>
+      <form class="auth-form" id="auth-form" novalidate>
+        <label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input name="password" type="password" required minlength="${MIN_PW}" autocomplete="${mode === "signup" ? "new-password" : "current-password"}" placeholder="${mode === "signup" ? `At least ${MIN_PW} characters` : "Your password"}"></label>
+        ${mode === "signup" ? `<label>Repeat password<input name="password2" type="password" required minlength="${MIN_PW}" autocomplete="new-password"></label>` : ""}
+        <button type="submit" class="primary">${mode === "signup" ? "Create account" : "Sign in"}</button>
+        <p class="auth-msg small" id="auth-msg" role="status"></p>
+      </form>
+      <div class="auth-links">${mode === "signin" ? `<button type="button" class="linkish" id="auth-forgot">Forgot password?</button>` : "<span></span>"}
+        <button type="button" class="linkish" id="auth-link">Email me a one-time sign-in link instead</button></div>
+    </div>`;
+  document.querySelectorAll(".auth-card [data-mode]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); signInForm(title, intro, a.dataset.mode); addEyebrow((location.hash.split("?")[0].split("/")[1]) || ""); }));
+  const form = $("#auth-form"), msg = $("#auth-msg"), say = (h, bad) => { msg.innerHTML = h; msg.className = `auth-msg small ${bad ? "down" : ""}`; };
+  const remember = () => { try { localStorage.setItem("afterSignIn", location.hash && !location.hash.startsWith("#/account") ? location.hash : "#/watchlist"); } catch { /* private mode */ } };
+  form.onsubmit = async (e) => {
     e.preventDefault();
-    const email = $("input", e.target).value.trim(), btn = $("button", e.target), msg = $("#signin-msg");
+    const email = form.email.value.trim(), pw = form.password.value, btn = $("button[type=submit]", form);
+    if (!email || !/.+@.+\..+/.test(email)) return say("Enter a valid email address.", true);
+    if (pw.length < MIN_PW) return say(`Passwords need at least ${MIN_PW} characters.`, true);
+    if (mode === "signup" && pw !== form.password2.value) return say("The two passwords don't match.", true);
     btn.disabled = true;
-    try { localStorage.setItem("afterSignIn", location.hash || "#/watchlist"); } catch { /* private mode */ }
-    const { error } = await db().auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
+    try {
+      if (mode === "signup") {
+        remember();
+        const { data, error } = await db().auth.signUp({ email, password: pw, options: { emailRedirectTo: backHere() } });
+        if (error) throw error;
+        if (data.session) { toast("Account created. You're signed in."); renderAccountChip(); route(); }
+        else say(`Almost done: we sent a confirmation email to <b>${esc(email)}</b>. Open it once, then sign in here with your password.`);
+      } else {
+        const { error } = await db().auth.signInWithPassword({ email, password: pw });
+        if (error) throw error;
+        toast("Signed in."); renderAccountChip();
+        if (location.hash.startsWith("#/account")) location.hash = "#/watchlist"; else route();
+      }
+    } catch (x) { say(esc(friendly(x)), true); }
     btn.disabled = false;
-    msg.innerHTML = error
-      ? `<span class="down">${esc(error.message)}</span>${/rate|limit|seconds/i.test(error.message) ? " The free email service sends only a few links an hour; try again a little later." : ""}`
-      : `Sent. Check the inbox for <b>${esc(email)}</b> and tap the link. It works once and expires in an hour.`;
   };
+  const forgot = $("#auth-forgot");
+  if (forgot) forgot.onclick = async () => {
+    const email = form.email.value.trim();
+    if (!/.+@.+\..+/.test(email)) return say("Type your email above first, then tap “Forgot password?”.", true);
+    try { localStorage.setItem("pwResetAsked", "1"); } catch { /* private mode */ }
+    const { error } = await db().auth.resetPasswordForEmail(email, { redirectTo: backHere() });
+    say(error ? esc(friendly(error)) : `We sent a reset link to <b>${esc(email)}</b>. Open it on this device to choose a new password.`, !!error);
+  };
+  $("#auth-link").onclick = async () => {
+    const email = form.email.value.trim();
+    if (!/.+@.+\..+/.test(email)) return say("Type your email above first.", true);
+    remember();
+    const { error } = await db().auth.signInWithOtp({ email, options: { emailRedirectTo: backHere() } });
+    say(error ? esc(friendly(error)) : `Sent. Check the inbox for <b>${esc(email)}</b> and tap the link. It works once and expires in an hour.`, !!error);
+  };
+}
+
+/* ---------- account page: sign in / create account, change password, sign out ---------- */
+async function pageAccount(sub) {
+  if (!db()) { notConnected("Account"); return; }
+  const user = await currentUser();
+  let recovering = sub === "reset";
+  try { if (sessionStorage.getItem("pwRecovery")) recovering = true; } catch { /* private mode */ }
+  if (!user) { signInForm("Account", "Sign in to save your watchlists and trade journal. They sync across your phone and laptop."); return; }
+  view().innerHTML = `<h1>${recovering ? "Choose a new password" : "Your account"}</h1>
+    <p class="muted">Signed in as <b>${esc(user.email)}</b>.</p>
+    <div class="auth-card">
+      <h2>${recovering ? "New password" : "Change password"}</h2>
+      <form class="auth-form" id="pw-form" novalidate>
+        <label>New password<input name="password" type="password" minlength="${MIN_PW}" autocomplete="new-password" placeholder="At least ${MIN_PW} characters"></label>
+        <label>Repeat new password<input name="password2" type="password" minlength="${MIN_PW}" autocomplete="new-password"></label>
+        <button type="submit" class="primary">Save password</button>
+        <p class="auth-msg small" id="pw-msg" role="status"></p>
+      </form>
+    </div>
+    <div class="stat-cards two" style="margin-top:18px">
+      <a class="stat-card" href="#/watchlist"><span>Your lists</span><strong>Watchlist</strong><small>Stocks you are following</small><em class="tap">open ›</em></a>
+      <a class="stat-card" href="#/journal"><span>Your trades</span><strong>Journal</strong><small>Entries, exits and results</small><em class="tap">open ›</em></a>
+    </div>
+    <p style="margin-top:18px"><button type="button" data-signout>Sign out</button></p>`;
+  const f = $("#pw-form"), m = $("#pw-msg");
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const pw = f.password.value;
+    if (pw.length < MIN_PW) { m.innerHTML = `<span class="down">Passwords need at least ${MIN_PW} characters.</span>`; return; }
+    if (pw !== f.password2.value) { m.innerHTML = `<span class="down">The two passwords don't match.</span>`; return; }
+    const { error } = await db().auth.updateUser({ password: pw });
+    if (error) { m.innerHTML = `<span class="down">${esc(friendly(error))}</span>`; return; }
+    try { sessionStorage.removeItem("pwRecovery"); } catch { /* private mode */ }
+    f.reset(); m.innerHTML = "Saved. Use this password next time you sign in.";
+    toast("Password saved.");
+  };
+  wireSignOut();
+}
+
+/* ---------- top-bar account button: "Sign in", or your initial with a small menu ---------- */
+async function renderAccountChip() {
+  const box = document.getElementById("acct");
+  if (!box) return;
+  const user = db() ? await currentUser() : null;
+  if (!user) {
+    box.innerHTML = `<a href="#/account" class="nav-btn acct-signin" data-route="account">Sign in</a>`;
+    return;
+  }
+  const initial = esc((user.email || "?")[0].toUpperCase());
+  box.innerHTML = `<div class="nav-group"><button type="button" class="nav-btn acct-chip" aria-haspopup="true" aria-label="Account"><span class="avatar">${initial}</span><span class="acct-mail">${esc(user.email)}</span></button>
+    <div class="menu menu-right">
+      <a href="#/watchlist" class="menu-item"><span><b>Watchlist</b><small>stocks you follow</small></span><i aria-hidden="true">›</i></a>
+      <a href="#/journal" class="menu-item"><span><b>Journal</b><small>your trades</small></span><i aria-hidden="true">›</i></a>
+      <a href="#/account" class="menu-item"><span><b>Account</b><small>change password</small></span><i aria-hidden="true">›</i></a>
+      <button type="button" class="menu-item menu-btn" data-signout><span><b>Sign out</b><small>${esc(user.email)}</small></span></button>
+    </div></div>`;
+  wireSignOut();
 }
 
 /* Shared gate: returns the signed-in user, or draws the right screen and returns null. */
@@ -63,7 +181,7 @@ async function gate(title, intro) {
 }
 const whoLine = (user) => `<p class="whoami">Signed in as ${esc(user.email)} · <button type="button" class="linkish" data-signout>Sign out</button></p>`;
 function wireSignOut() {
-  document.querySelectorAll("[data-signout]").forEach((b) => (b.onclick = async () => { await db().auth.signOut(); route(); }));
+  document.querySelectorAll("[data-signout]").forEach((b) => (b.onclick = async () => { await db().auth.signOut(); renderAccountChip(); toast("Signed out."); route(); }));
 }
 
 /* ---------- small UI pieces ---------- */
