@@ -1,0 +1,232 @@
+{
+ "date": "2026-10-01",
+ "tracked": 2145,
+ "universe": 2430,
+ "stage_counts": {
+  "1": 339,
+  "2": 481,
+  "3": 675,
+  "4": 691
+ },
+ "stage2": 481,
+ "candidates": 396,
+ "entered_stage2": [
+  "BSE:ACEMEN",
+  "BSE:UNIFIED",
+  "NSE:AEGISVOPAK",
+  "NSE:AKSHOPTFBR",
+  "NSE:ATLANTAELE",
+  "NSE:BHEL",
+  "NSE:BI",
+  "NSE:BIRLAPREC",
+  "NSE:CGCL",
+  "NSE:RBA",
+  "NSE:SACHEEROME",
+  "NSE:SAHYADRI",
+  "NSE:SCHNEIDER",
+  "NSE:SHETHJI",
+  "NSE:STOVEKRAFT",
+  "NSE:TARSONS",
+  "NSE:TMB",
+  "NSE:UNIDT",
+  "NSE:VENKEYS"
+ ],
+ "exited_stage2": [
+  "BSE:AFCOM",
+  "BSE:EMMFORCE",
+  "BSE:JAYKAILASH",
+  "BSE:MSECL",
+  "NSE:20MICRONS",
+  "NSE:ACUTAAS",
+  "NSE:ADOR",
+  "NSE:APEXECO",
+  "NSE:APLAPOLLO",
+  "NSE:AURUM",
+  "NSE:BALRAMCHIN",
+  "NSE:BELRISE",
+  "NSE:BOSCHLTD",
+  "NSE:CAPITALSFB",
+  "NSE:CAPLIPOINT",
+  "NSE:CHENNPETRO",
+  "NSE:COMSYN",
+  "NSE:ELGIEQUIP",
+  "NSE:FELIX",
+  "NSE:GRWRHITECH",
+  "NSE:HAPPYFORGE",
+  "NSE:IVZINGOLD",
+  "NSE:JAGSNPHARM",
+  "NSE:JNKINDIA",
+  "NSE:KMSUGAR",
+  "NSE:KPIL",
+  "NSE:KPRMILL",
+  "NSE:KRISHANA",
+  "NSE:KSB",
+  "NSE:MOTHERSON",
+  "NSE:MUNJALAU",
+  "NSE:PARIN",
+  "NSE:PCBL",
+  "NSE:PFOCUS",
+  "NSE:PHARMABEES",
+  "NSE:POWERMECH",
+  "NSE:PRITIKAUTO",
+  "NSE:PVP",
+  "NSE:REGAAL",
+  "NSE:REMUS",
+  "NSE:ROLLT",
+  "NSE:SAIL",
+  "NSE:SANGHVIMOV",
+  "NSE:SAREGAMA",
+  "NSE:SATIN",
+  "NSE:SCPL",
+  "NSE:SEAMECLTD",
+  "NSE:SHRIAHIMSA",
+  "NSE:SHRIPISTON",
+  "NSE:SINGERIND",
+  "NSE:SMARTWORKS",
+  "NSE:SOLARINDS",
+  "NSE:STEELXIND",
+  "NSE:TALBROAUTO",
+  "NSE:THEJO",
+  "NSE:THEMISMED",
+  "NSE:TNPL",
+  "NSE:TVSSCS",
+  "NSE:UNICHEMLAB",
+  "NSE:UNIPARTS",
+  "NSE:WABAG",
+  "NSE:WENDT",
+  "NSE:WINDMACHIN",
+  "NSE:WPIL"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:SMCGLOBAL",
+   "change": 37.0
+  },
+  {
+   "key": "NSE:KILITCH",
+   "change": 35.0
+  },
+  {
+   "key": "NSE:TIMETECHNO",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:RSYSTEMS",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:ALICON",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:SUNTV",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:DENTALKART",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:PRIMO",
+   "change": 24.0
+  },
+  {
+   "key": "BSE:KINETICENG",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:THOMASCOTT",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:IDBI",
+   "change": 22.0
+  },
+  {
+   "key": "BSE:GTV",
+   "change": 22.0
+  },
+  {
+   "key": "NSE:MAXIND",
+   "change": 22.0
+  },
+  {
+   "key": "NSE:PUSHPA",
+   "change": 22.0
+  },
+  {
+   "key": "NSE:ESTER",
+   "change": 21.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "BSE:BGDL",
+   "change": -56.0
+  },
+  {
+   "key": "NSE:EMPOWER",
+   "change": -42.0
+  },
+  {
+   "key": "NSE:GICL",
+   "change": -37.0
+  },
+  {
+   "key": "BSE:SPICELOUNG",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:MEDICO",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:SUPREMEINF",
+   "change": -23.0
+  },
+  {
+   "key": "BSE:NWIL",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:BAJAJHCARE",
+   "change": -21.0
+  },
+  {
+   "key": "NSE:GMDCLTD",
+   "change": -21.0
+  },
+  {
+   "key": "NSE:IRMENERGY",
+   "change": -20.0
+  },
+  {
+   "key": "NSE:V2RETAIL",
+   "change": -19.0
+  },
+  {
+   "key": "NSE:NOCIL",
+   "change": -19.0
+  },
+  {
+   "key": "NSE:ASIANHOTNR",
+   "change": -18.0
+  },
+  {
+   "key": "NSE:PCJEWELLER",
+   "change": -18.0
+  },
+  {
+   "key": "NSE:TSFINV",
+   "change": -18.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 181,
+  "basic_industry_3m": 181
+ }
+}
