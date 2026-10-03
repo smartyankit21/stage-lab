@@ -217,7 +217,7 @@ async function select(symbol, { scroll }) {
 function header(r, item, scoreText) {
   const pageLink = item.page ? `<a class="btn" href="#/stock/${encodeURIComponent(item.page)}">Stage Lab page</a>` : "";
   return `<div class="scr-dhead">
-      <div><h2 class="scr-sym">${esc(r.symbol)}</h2><p class="muted small">${esc(displayName(item))} · ${longDate(r.latest.date)}</p><p class="small">${capLine(r)}</p></div>
+      <div><h2 class="scr-sym">${esc(displayName(item))} <span class="tick">${esc(r.symbol)}</span></h2><p class="muted small">${longDate(r.latest.date)}</p><p class="small">${capLine(r)}</p></div>
       <div class="scr-score"><strong>${scoreText}</strong><span class="${qualified(r) ? "q" : "muted"}">${qualified(r) ? "Qualified" : "Below threshold"}</span></div>
     </div>
     <div class="scr-actions"><button type="button" id="scr-watch">Watch</button><a class="btn" href="#/journal/new?s=${encodeURIComponent("NSE:" + r.symbol)}">Log a trade</a>${pageLink}<button type="button" id="scr-dl">Download Excel-compatible analysis</button></div>`;
