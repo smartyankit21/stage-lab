@@ -464,13 +464,18 @@ async function pageStock(file) {
       <div class="stat-card"><span>RS 12M</span><strong>${fmt.int(s.rs12)}</strong></div><div class="stat-card"><span>RS 3M</span><strong>${fmt.int(s.rs3)}</strong></div>
       <div class="stat-card"><span>52-week range</span><strong>${fmt.px(s.l52)} – ${fmt.px(s.h52)}</strong></div>
       ${s.stage === 2 ? `<div class="stat-card"><span>Stage 2 entry</span><strong>${fmt.px(s.s2_entry_price)}</strong><small>${fmt.date(s.s2_entry_date)} · ${fmt.pct(s._fromEntry)}</small></div>` : ""}
+      <a class="stat-card" href="#/stock/${encodeURIComponent(file)}" data-jump="checklist"><span>Stage 2 checklist</span><strong>${s.rules_met} / 8</strong><small>rules met</small></a>
+      <a class="stat-card" href="#/stock/${encodeURIComponent(file)}" data-jump="screens" id="sc-match"><span>Match Score</span><strong>…</strong><small>delivery screen</small></a>
+      <a class="stat-card" href="#/stock/${encodeURIComponent(file)}" data-jump="screens" id="sc-pdv"><span>PDV_Persist+Mom</span><strong>…</strong><small>delivery screen</small></a>
       <div class="stat-card"><span>Market cap</span><strong>${fmt.cr(s.mcap_cr)}</strong></div><div class="stat-card"><span>P/E</span><strong>${s.pe == null ? "–" : s.pe.toFixed(1)}</strong></div><div class="stat-card"><span>Turnover a day</span><strong>${fmt.cr(s.turnover_cr)}</strong></div>
     </div>
     <div class="chart-head" style="margin-top:28px"><div class="legend" style="margin:0"><span><i style="background:var(--c1)"></i>50-day</span><span><i style="background:var(--c2)"></i>150-day</span><span><i style="background:var(--c3)"></i>200-day</span><span>Strip at the bottom shows the stage</span></div><div class="ranges" id="rng"></div></div>
     <div id="pchart" class="chart"></div>
     <div id="rchart" class="chart small"></div>
     <div class="legend"><span><i style="background:var(--ink)"></i>RS 12M</span><span><i style="background:var(--s1)"></i>RS 3M</span><span>Dotted line marks 70</span></div>
-    <section class="section"><h2>Stage 2 checklist <span class="count">${s.rules_met} of 8 met</span></h2><ul class="checks">${ticks}</ul></section>`;
+    <section class="section" id="checklist"><h2>Stage 2 checklist <span class="count">${s.rules_met} of 8 met</span></h2><ul class="checks">${ticks}</ul></section>
+    <div id="stock-screens"><p class="muted small">Loading delivery screens…</p></div>`;
+  document.querySelectorAll("[data-jump]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); document.getElementById(a.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }); }));
   $("#btn-watch").onclick = () => watchDialog(s).catch((e) => toast(esc(e.message), true));
   markWatched(s).catch(() => {});
   const [d, su] = await Promise.all([load(`series/${file}.json`), load("setups.json").catch(() => null)]);
@@ -482,6 +487,12 @@ async function pageStock(file) {
   }
   const charts = drawStockCharts(d, setup);
   if (charts) addRanges($("#rng"), charts, d.d, "1Y");
+  const scr = window.stockScreens ? await window.stockScreens(s, $("#stock-screens")).catch(() => null) : null;
+  const card = (id, r, max) => { const el = document.getElementById(id); if (!el) return;
+    if (!r) { el.querySelector("strong").textContent = "–"; el.querySelector("small").textContent = "not scored"; return; }
+    el.querySelector("strong").textContent = `${r.score} / ${max}`;
+    el.querySelector("small").innerHTML = r.status === "candidate" ? `<span class="up">Qualified</span>` : "below threshold"; };
+  card("sc-match", scr?.match, 12); card("sc-pdv", scr?.daily, 2);
 }
 
 function drawStockCharts(d, setup = null) {

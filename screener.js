@@ -409,3 +409,65 @@ async function exportScan(kind, data) {
     download(`${kind === "match" ? "match-score" : "pdv-persist-mom"}-${asof}.csv`, "﻿" + csv, "text/csv;charset=utf-8");
   } finally { btn.disabled = false; btn.textContent = "Export scan"; }
 }
+
+/* ---------- stock page: Match Score + PDV_Persist+Mom for one stock ----------
+   Called by the stock page (app.js) with the Stage Lab stock and an empty element.
+   Same calculations as the screener detail; nothing is recomputed differently. */
+window.stockScreens = async function stockScreens(s, mount) {
+  st.cleanups.splice(0).forEach((f) => { try { f(); } catch { /* already gone */ } });
+  let list;
+  try { list = await getList("match"); } catch { mount.innerHTML = ""; return null; }
+  const item = list.results.find((r) => r.page === s.file) || null;
+  const dfile = item?.file || (s.file.startsWith("NSE_") ? s.file : null);
+  if (!dfile) {
+    mount.innerHTML = `<section class="section"><h2>Delivery screens</h2><p class="muted">Match Score and PDV_Persist+Mom use NSE delivery data, and this stock isn't in NSE's delivery files (for example BSE-only listings).</p></section>`;
+    return null;
+  }
+  let doc;
+  try { doc = await load(`dseries/${dfile}.json`); }
+  catch { mount.innerHTML = `<section class="section"><h2>Delivery screens</h2><p class="muted">No NSE delivery history is on file for this stock.</p></section>`; return null; }
+  if (!mount.isConnected) return null;
+  const asof = list.info.asof, rows = toRows(doc), symbol = doc.symbol;
+  const meta = { symbol, name: item?.name || s.name, ...(item && capOf(item) != null ? { marketCapCrore: capOf(item) } : {}) };
+  const m = matchStock(rows, asof, meta), d = dailyScoreStock(rows, asof, meta);
+  if (!m) { mount.innerHTML = `<section class="section"><h2>Delivery screens</h2><p class="muted">Too little NSE delivery history to score this stock.</p></section>`; return null; }
+  const belowCap = !item;
+  const metrics = Object.entries(matchExport(m)).filter(([k]) => !["SYMBOL", "DATE", "Match_Score"].includes(k));
+  const dm = d?.metrics;
+  st.lookback = 180;
+  mount.innerHTML = `
+    <section class="section" id="screens"><h2>Delivery &amp; accumulation <span class="count">NSE delivery data to ${longDate(asof)}</span></h2>
+      ${belowCap ? `<p class="notice small">This stock isn't in the Match Score list because its market cap is below ₹${MATCH_MIN_MARKET_CAP_CRORE.toLocaleString("en-IN")} crore (or it's outside the screen). The scores below are worked out the same way, for information.</p>` : ""}
+      ${m.issues.length ? `<p class="notice small">${esc(m.issues.join(" "))}</p>` : ""}
+      ${priceBlock()}
+    </section>
+    <section class="section"><h2>Match Score <span class="count">${m.score} of 12 · ${qualified(m) ? "Qualified" : "below 9"}</span></h2>
+      <p class="muted small">PDV ratio = delivery per trade ÷ its 20-session average, including the current session. Blocks are five sessions each, newest first.</p>
+      ${conditionsTable(m.conditions, true)}
+      <p class="muted small">Days with PDV ratio ≥ 1 must reach ${COUNT_LIMITS.join(", ")}; PDV sums must be ≥ ${SUM_LIMITS.slice(0, 4).join(", ")} for blocks 1–4 and ≤ ${SUM_LIMITS.slice(4).join(", ")} for blocks 5–6.</p>
+      <h3>PDV trend</h3><div class="legend" style="margin:0 0 6px"><span><i style="background:var(--c1)"></i>SMA(15)</span><span><i style="background:var(--c2)"></i>SMA(45)</span></div>
+      <div id="scr-pdv" class="chart mid"></div>
+      <h3>Screening metrics</h3>
+      <table class="plain scr-metrics"><tbody>${metrics.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${typeof v === "number" ? (k === "MARKET_CAP_CRORE" ? "₹" + n0(v) + " crore" : nf(v, Number.isInteger(v) ? 0 : 2)) : esc(v === "" || v == null ? "Unavailable" : v)}</td></tr>`).join("")}</tbody></table>
+      <details class="scr-conds"><summary>Stock analysis score: ${m.analysisScore} of ${m.analysisConditions.length}</summary>${conditionsTable(m.analysisConditions.map((c) => ({ ...c, group: "" })), false)}</details>
+    </section>
+    <section class="section"><h2>PDV_Persist+Mom <span class="count">${d ? `${d.score} of ${DAILY_SCORE_MAX} · ${qualified(d) ? "Qualified" : "below threshold"}` : "not scored"}</span></h2>
+      ${d ? `<p class="muted small">z21 > 15 (sessions with PDVr ≥ 1 in the last 21) and 10-session compounded return ≥ 8%.</p>
+      ${conditionsTable(d.conditions, false)}
+      <div class="scr-strip">${[["Change", n2(dm.change) + "%"], ["PTVr", n2(dm.ptvRatio)], ["PDVr", n2(dm.pdvRatio)], ["VOLr", n2(dm.volumeRatio)], ["z21", n0(dm.z21)], ["mom10", n1(dm.mom10) + "%"]]
+        .map(([l, v]) => `<div><span>${l}</span>${v}</div>`).join("")}</div>`
+      : `<p class="muted">Not scored: this screen needs at least 30 EQ/BE sessions and a trade on ${longDate(asof)}.</p>`}
+    </section>
+    <section class="section"><h2>Daily analysis table</h2>
+      <details class="scr-conds"><summary>Show every field, newest session first</summary>
+        <p class="muted small">The return columns look forward from each date, so they are history, not a forecast. <button type="button" class="linkish" id="stk-dl">Download Excel-compatible file</button></p>
+        <div class="scr-analysis"><table><thead><tr>${MATCH_COLS.map(([h]) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${m.analysisRows.slice().reverse().map((q) =>
+          `<tr>${MATCH_COLS.map(([, k]) => `<td>${k === "date" ? q.date : fin(q[k]) ? n2(q[k]) : esc(q[k] ?? "")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+      </details>
+      <p class="muted small">A research tool, not investment advice.</p>
+    </section>`;
+  $("#stk-dl").onclick = () => download(`${symbol}-daily-analysis.xls`, `<html><head><meta charset="utf-8"></head><body>${$(".scr-analysis table").outerHTML}</body></html>`, "application/vnd.ms-excel");
+  drawPrice(m.analysisRows);
+  drawPdv(m.analysisRows);
+  return { match: m, daily: d };
+};
