@@ -674,3 +674,7 @@ button.linkish:hover { text-decoration: underline; background: none; }
 img.avatar { object-fit: cover; background: #eee; }
 .acct-card { display: flex; align-items: center; gap: 14px; }
 .acct-card .avatar { width: 48px; height: 48px; font-size: 20px; }
+.scr-stage { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 10px 0 0; padding: 10px 14px; border: 1px solid var(--rule); border-radius: 12px; font-size: 13px; color: var(--muted); text-decoration: none; }
+.scr-stage b { color: var(--ink); }
+.scr-stage .tap { margin-left: auto; color: var(--accent); font-weight: 600; }
+.scr-stage:hover { background: var(--subtle); }
