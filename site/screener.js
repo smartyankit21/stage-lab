@@ -407,7 +407,7 @@ async function exportScan(kind, data) {
       while (next < list.length) {
         const i = next++, it = list[i];
         btn.textContent = `Preparing ${n0(i + 1)} of ${n0(list.length)}…`;
-        const doc = await fetch(`data/dseries/${it.file}.json`).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+        const doc = await fetch(`data/dseries/${it.file}.json?d=${await dataVersion()}`).then((x) => (x.ok ? x.json() : null)).catch(() => null);
         if (!doc) continue;
         const meta = { symbol: it.symbol, name: it.name, ...(capOf(it) == null ? {} : { marketCapCrore: capOf(it) }) };
         const r = kind === "match" ? matchStock(toRows(doc), asof, meta) : dailyScoreStock(toRows(doc), asof, meta);

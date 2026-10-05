@@ -21,9 +21,14 @@ const $ = (sel, el = document) => el.querySelector(sel);
 const view = () => $("#view");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+/* Every data file is fetched with the data date in its address, so after an update the browser never
+   mixes old and new files. The date comes from summary.json, always fetched fresh. */
+let DATA_VER = null;
+const dataVersion = () => (DATA_VER ||= fetch(`data/summary.json?t=${Date.now()}`, { cache: "no-store" })
+  .then((r) => (r.ok ? r.json() : null)).then((s) => s?.date || "x").catch(() => "x"));
 async function load(name) {
   if (!cache[name]) {
-    cache[name] = fetch(`data/${name}`).then((r) => {
+    cache[name] = dataVersion().then((v) => fetch(`data/${name}?d=${v}`)).then((r) => {
       if (!r.ok) throw new Error(`${name}: ${r.status}`);
       return r.json();
     });
@@ -866,8 +871,71 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("[data-open-menu]").onclick = () => $(".side").classList.toggle("open");
   $(".side").addEventListener("click", (e) => { if (e.target.closest("a")) $(".side").classList.remove("open"); });
   load("summary.json").then((s) => ($("#asof").textContent = `Data as of the close on ${fmt.date(s.date)}`)).catch(() => {});
+  wireRefresh();
   SPARKS = await load("sparks.json").catch(() => ({}));
   await finishSignIn().catch(() => {});
   window.addEventListener("hashchange", route);
   route();
 });
+
+
+/* ---------- Refresh: check for newer data, and if there's none yet, ask the update job to fetch it ---------- */
+async function siteDate() {
+  const r = await fetch(`data/summary.json?t=${Date.now()}`, { cache: "no-store" });
+  return r.ok ? (await r.json()).date : null;
+}
+function wireRefresh() {
+  const btn = $("#refresh");
+  if (!btn) return;
+  const label = btn.querySelector("span");
+  const busy = (on, text) => { btn.disabled = on; btn.classList.toggle("spin", on); if (label) label.textContent = text || "Refresh"; };
+  // finish a refresh that was in progress before the page was reloaded or reopened
+  let pending = null;
+  try { pending = JSON.parse(sessionStorage.getItem("refreshWait") || "null"); } catch { /* private mode */ }
+  if (pending) watch(pending.shown, true);
+
+  btn.onclick = async () => {
+    busy(true, "Checking…");
+    const shown = await dataVersion();
+    const now = await siteDate().catch(() => null);
+    if (now && now !== shown) return reloadWith(now);
+    let res = null;
+    try { res = await fetch("/api/refresh", { method: "POST" }).then((r) => r.json()); } catch { /* offline */ }
+    if (!res || res.error) {
+      busy(false);
+      toast(res?.error === "not-configured" ? "The site already has the latest data it has received. (Fetching from NSE/BSE on demand isn't switched on yet.)" : "Couldn't reach the update service. Please try again in a minute.", true);
+      return;
+    }
+    toast(res.started ? "Checking NSE and BSE for new data. This takes about 5 minutes; the page will update by itself." : "An update is already running. The page will update by itself when it finishes.");
+    watch(shown, false);
+  };
+
+  function watch(shown, resumed) {
+    try { sessionStorage.setItem("refreshWait", JSON.stringify({ shown, at: Date.now() })); } catch { /* private mode */ }
+    busy(true, "Updating…");
+    const t0 = Date.now();
+    const tick = async () => {
+      const now = await siteDate().catch(() => null);
+      if (now && now !== shown) return reloadWith(now);
+      let st = null;
+      try { st = await fetch("/api/refresh").then((r) => r.json()); } catch { /* try again */ }
+      // job done (allow a minute for the site to publish) or waited too long
+      const finished = st && !st.running && Date.now() - Date.parse(st.run?.updated || 0) > 60e3 && Date.now() - t0 > 60e3;
+      if (finished || Date.now() - t0 > 25 * 60e3) {
+        try { sessionStorage.removeItem("refreshWait"); } catch { /* private mode */ }
+        busy(false);
+        toast(`No newer data yet. The site has the close of ${fmt.date(shown)}; NSE and BSE haven't published anything newer.`);
+        return;
+      }
+      setTimeout(tick, 20e3);
+    };
+    setTimeout(tick, resumed ? 1000 : 20e3);
+  }
+  function reloadWith(date) {
+    try { sessionStorage.removeItem("refreshWait"); sessionStorage.setItem("refreshedTo", date); } catch { /* private mode */ }
+    location.reload();
+  }
+  let done = null;
+  try { done = sessionStorage.getItem("refreshedTo"); sessionStorage.removeItem("refreshedTo"); } catch { /* private mode */ }
+  if (done) setTimeout(() => toast(`Updated: everything now shows the close of ${fmt.date(done)}.`), 600);
+}

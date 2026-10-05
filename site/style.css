@@ -678,3 +678,7 @@ img.avatar { object-fit: cover; background: #eee; }
 .scr-stage b { color: var(--ink); }
 .scr-stage .tap { margin-left: auto; color: var(--accent); font-weight: 600; }
 .scr-stage:hover { background: var(--subtle); }
+.refresh-btn:disabled { opacity: .75; cursor: progress; }
+.refresh-btn.spin svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .refresh-btn.spin svg { animation: none; } }
