@@ -13,6 +13,8 @@ const istToday = () => new Date(Date.now() + 5.5 * 3600e3).toISOString().slice(0
 
 export default async () => {
   if (!process.env.GH_TOKEN) { console.log("GH_TOKEN not set"); return; }
+  const istHour = new Date(Date.now() + 5.5 * 3600e3).getUTCHours();
+  if (istHour < 18) { console.log("after midnight IST: today's close is handled by the evening checks"); return; }
   const today = istToday();
   const site = process.env.URL || "https://stage-lab-tkku.netlify.app";
   const shown = await fetch(`${site}/data/summary.json?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)).then((s) => s?.date).catch(() => null);
