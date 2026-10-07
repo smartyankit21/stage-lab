@@ -1,0 +1,89 @@
+# Makes the evening update dependable without any outside service.
+#
+# GitHub starts scheduled jobs late (often 5-8 hours on busy days), so this job is scheduled early in the
+# afternoon. Whenever it actually starts, it:
+#   1. stops if it's a weekend or the live site already shows today's close;
+#   2. waits until 6:15 pm IST, then waits until NSE has published today's files (checks every 10 minutes);
+#   3. starts the `daily-update` workflow and waits for it;
+#   4. checks the live site now shows today; if not, tries again 30 minutes later (up to 3 tries, until 11:45 pm IST).
+# It only waits and starts `daily-update`; it never changes code or data itself. It uses GitHub's built-in token.
+name: nightly-trigger
+
+on:
+  schedule:
+    - cron: "47 8 * * 1-5"    # 2:17 pm IST (GitHub may start it hours later; that's fine)
+    - cron: "47 11 * * 1-5"   # 5:17 pm IST, second chance
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only test the checks (site date, NSE file for the last trading day); don't wait or update"
+        type: boolean
+        default: true
+
+permissions:
+  actions: write     # to start daily-update
+  contents: read
+
+concurrency:
+  group: nightly-trigger
+  cancel-in-progress: false
+
+jobs:
+  wait-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      TZ: Asia/Kolkata
+    steps:
+      - name: Wait for today's close, then update the site
+        run: |
+          set -u
+          today=$(date +%F); dow=$(date +%u)
+          site_date() { gh api "repos/$REPO/contents/data/summary.json?ref=site" -q .content | base64 -d | python3 -c "import sys,json;print(json.load(sys.stdin)['date'])" 2>/dev/null || echo none; }
+          now_min() { echo $(( 10#$(date +%H) * 60 + 10#$(date +%M) )); }
+          echo "IST now: $(date '+%F %H:%M'); site shows: $(site_date)"
+          if [ "${{ inputs.dry_run || false }}" = "true" ]; then
+            prev=$(python3 -c "import datetime as d;t=d.date.today()-d.timedelta(1)
+          while t.weekday()>4: t-=d.timedelta(1)
+          print(t.strftime('%d%m%Y'))")
+            code=$(curl -s -o /tmp/nse.csv -w '%{http_code}' -A "Mozilla/5.0" -e "https://www.nseindia.com/" "https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_${prev}.csv" || echo 000)
+            echo "DRY RUN: NSE file for $prev -> HTTP $code, starts with: $(head -c 60 /tmp/nse.csv | tr '\n' ' ')"
+            echo "DRY RUN: latest daily-update run: $(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0]|[.status,.conclusion]|@tsv')"
+            exit 0
+          fi
+          [ "$dow" -ge 6 ] && { echo "Weekend: nothing to do."; exit 0; }
+          [ "$(site_date)" = "$today" ] && { echo "Site already shows $today."; exit 0; }
+
+          # 1) not before 6:15 pm IST
+          while [ "$(now_min)" -lt $((18*60+15)) ]; do sleep 300; done
+
+          # 2) wait until NSE has published today's delivery file (or 11:45 pm, e.g. a holiday)
+          ddmmyyyy=$(date +%d%m%Y)
+          url="https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_${ddmmyyyy}.csv"
+          while :; do
+            code=$(curl -s -o /tmp/nse.csv -w '%{http_code}' -A "Mozilla/5.0" -e "https://www.nseindia.com/" "$url" || echo 000)
+            if [ "$code" = "200" ] && head -c 200 /tmp/nse.csv | grep -qi "SYMBOL"; then echo "NSE file for $today is out."; break; fi
+            [ "$(now_min)" -ge $((23*60+45)) ] && { echo "No NSE file by 11:45 pm: probably a market holiday. Stopping."; exit 0; }
+            echo "$(date +%H:%M) NSE file not out yet (HTTP $code); checking again in 10 minutes."; sleep 600
+          done
+
+          # 3) and 4) start the update, wait, confirm; retry up to 3 times
+          for attempt in 1 2 3; do
+            before=$(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0].id' || echo 0)
+            running=$(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0].status' || echo none)
+            if [ "$running" != "completed" ]; then echo "An update is already running; waiting for it."; id=$before
+            else
+              gh workflow run daily.yml --repo "$REPO" --ref main
+              for i in $(seq 1 30); do sleep 10; id=$(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0].id'); [ "$id" != "$before" ] && break; done
+              echo "Started update run $id (attempt $attempt)."
+            fi
+            gh run watch "$id" --repo "$REPO" --interval 30 > /dev/null || true
+            echo "Run $id finished: $(gh run view "$id" --repo "$REPO" --json conclusion -q .conclusion)"
+            sleep 90   # give the site a moment to publish
+            if [ "$(site_date)" = "$today" ]; then echo "Done: the site now shows $today."; exit 0; fi
+            [ "$(now_min)" -ge $((23*60+15)) ] && break
+            echo "Site still shows $(site_date); trying again in 30 minutes."; sleep 1800
+          done
+          echo "::warning::The site still doesn't show $today after the evening's tries."

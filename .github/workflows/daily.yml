@@ -9,10 +9,9 @@ name: daily-update
 
 on:
   schedule:
-    # Odd minutes on purpose: GitHub starts jobs set for :00/:15/:30/:45 much later when it's busy.
-    - cron: "23 13 * * 1-5"   # 6:53 pm IST
-    - cron: "37 14 * * 1-5"   # 8:07 pm IST, backup
-    - cron: "11 16 * * 1-5"   # 9:41 pm IST, catches exchange files that were published late
+    # The dependable evening start is nightly-trigger.yml (waits for NSE, then starts this workflow).
+    # This late run is only a backup; GitHub often starts it hours after the time below.
+    - cron: "11 16 * * 1-5"   # 9:41 pm IST
   workflow_dispatch: {}        # "Run workflow" button for a manual run
 
 permissions:
