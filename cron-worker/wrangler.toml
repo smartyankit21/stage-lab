@@ -1,0 +1,9 @@
+# Cloudflare Worker that starts the Stage Lab evening update on time (GitHub's own timer is unreliable).
+name = "stage-lab-nightly"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[triggers]
+# every 20 minutes, 13:00-18:59 UTC = 6:30 pm-12:29 am IST, Monday to Friday
+crons = ["*/20 13-18 * * 1-5"]
