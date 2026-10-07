@@ -84,6 +84,8 @@ jobs:
           tmp=$(mktemp -d)
           cp -r site/. "$tmp/"
           printf '[build]\n  publish = "."\n  command = ""\n\n[functions]\n  directory = "netlify/functions"\n\n[[headers]]\n  for = "/data/*"\n  [headers.values]\n    Cache-Control = "public, max-age=300, must-revalidate"\n\n[[headers]]\n  for = "/screeners/*"\n  [headers.values]\n    Content-Type = "text/javascript; charset=utf-8"\n' > "$tmp/netlify.toml"
+          # Same rules for Cloudflare Pages (_headers file)
+          printf '/data/*\n  Cache-Control: public, max-age=300, must-revalidate\n/screeners/*\n  Content-Type: text/javascript; charset=utf-8\n' > "$tmp/_headers"
           cd "$tmp"
           git init -q && git checkout -q --orphan "$TARGET"
           git add -A
