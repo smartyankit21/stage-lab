@@ -43,14 +43,14 @@ jobs:
           today=$(date +%F); dow=$(date +%u)
           site_date() { gh api "repos/$REPO/contents/data/summary.json?ref=site" -q .content | base64 -d | python3 -c "import sys,json;print(json.load(sys.stdin)['date'])" 2>/dev/null || echo none; }
           now_min() { echo $(( 10#$(date +%H) * 60 + 10#$(date +%M) )); }
-          echo "IST now: $(date '+%F %H:%M'); site shows: $(site_date)"
+          echo "::notice::IST now: $(date '+%F %H:%M'); site shows: $(site_date)"
           if [ "${{ inputs.dry_run || false }}" = "true" ]; then
             prev=$(python3 -c "import datetime as d;t=d.date.today()-d.timedelta(1)
           while t.weekday()>4: t-=d.timedelta(1)
           print(t.strftime('%d%m%Y'))")
             code=$(curl -s -o /tmp/nse.csv -w '%{http_code}' -A "Mozilla/5.0" -e "https://www.nseindia.com/" "https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_${prev}.csv" || echo 000)
-            echo "DRY RUN: NSE file for $prev -> HTTP $code, starts with: $(head -c 60 /tmp/nse.csv | tr '\n' ' ')"
-            echo "DRY RUN: latest daily-update run: $(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0]|[.status,.conclusion]|@tsv')"
+            echo "::notice::DRY RUN: NSE file for $prev -> HTTP $code, starts with: $(head -c 60 /tmp/nse.csv | tr '\n' ' ')"
+            echo "::notice::DRY RUN: latest daily-update run: $(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0]|[.status,.conclusion]|@tsv')"
             exit 0
           fi
           [ "$dow" -ge 6 ] && { echo "Weekend: nothing to do."; exit 0; }
