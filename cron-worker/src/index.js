@@ -14,13 +14,16 @@ async function check(env, force = false) {
   const now = ist(), today = now.toISOString().slice(0, 10);
   if (!force && now.getUTCHours() < 18) return "after midnight IST: nothing to do";
   const shown = await fetch(`${SITE}/data/summary.json?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)).then((s) => s?.date).catch(() => null);
-  if (shown === today) return `site already shows ${today}`;
+  if (shown === today && !force) return `site already shows ${today}`;
   const r = await gh(env, `/actions/workflows/${WORKFLOW}/runs?branch=main&per_page=1`);
   if (!r.ok) return `GitHub said ${r.status} when listing runs`;
+  if (force) {
+    const w = await gh(env, `/actions/workflows/${WORKFLOW}`);
+    return `self-test: site shows ${shown} (today ${today}); GitHub key works: ${r.ok && w.ok ? "yes" : "no"}; nothing was started`;
+  }
   const run = (await r.json()).workflow_runs?.[0];
   if (run && run.status !== "completed") return "an update is already running";
   if (run && Date.now() - Date.parse(run.run_started_at || run.created_at) < RETRY_MIN * 60e3) return "an update ran recently; will retry later";
-  if (force) return `ready: site shows ${shown}, GitHub reachable (test only, nothing started)`;
   const d = await gh(env, `/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
   return d.ok ? `started the update (site showed ${shown}, today ${today})` : `GitHub refused to start it: ${d.status}`;
 }
