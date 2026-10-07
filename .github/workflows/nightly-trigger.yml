@@ -19,6 +19,10 @@ on:
         description: "Only test the checks (site date, NSE file for the last trading day); don't wait or update"
         type: boolean
         default: true
+      test_start:
+        description: "With dry run: also test starting daily-update once"
+        type: boolean
+        default: false
 
 permissions:
   actions: write     # to start daily-update
@@ -51,6 +55,9 @@ jobs:
             code=$(curl -s -o /tmp/nse.csv -w '%{http_code}' -A "Mozilla/5.0" -e "https://www.nseindia.com/" "https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_${prev}.csv" || echo 000)
             echo "::notice::DRY RUN: NSE file for $prev -> HTTP $code, starts with: $(head -c 60 /tmp/nse.csv | tr '\n' ' ')"
             echo "::notice::DRY RUN: latest daily-update run: $(gh api "repos/$REPO/actions/workflows/daily.yml/runs?per_page=1" -q '.workflow_runs[0]|[.status,.conclusion]|@tsv')"
+            if [ "${{ inputs.test_start || false }}" = "true" ]; then
+              gh workflow run daily.yml --repo "$REPO" --ref main && echo "::notice::DRY RUN: started daily-update with the built-in token: OK" || echo "::warning::DRY RUN: could not start daily-update"
+            fi
             exit 0
           fi
           [ "$dow" -ge 6 ] && { echo "Weekend: nothing to do."; exit 0; }
