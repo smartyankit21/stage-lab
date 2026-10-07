@@ -3,6 +3,8 @@ name = "stage-lab-nightly"
 main = "src/index.js"
 compatibility_date = "2026-09-01"
 workers_dev = true
+# keep variables and secrets added in the Cloudflare dashboard (e.g. GH_TOKEN) when this worker is redeployed
+keep_vars = true
 
 [triggers]
 # every 20 minutes, 13:00-18:59 UTC = 6:30 pm-12:29 am IST, Monday to Friday
