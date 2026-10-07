@@ -903,7 +903,7 @@ function wireRefresh() {
     try { res = await fetch("/api/refresh", { method: "POST" }).then((r) => r.json()); } catch { /* offline */ }
     if (!res || res.error) {
       busy(false);
-      toast(res?.error === "not-configured" ? "The site already has the latest data it has received. (Fetching from NSE/BSE on demand isn't switched on yet.)" : "Couldn't reach the update service. Please try again in a minute.", true);
+      toast(`You're up to date: the site has the close of ${fmt.date(shown)}. New data arrives on its own every weekday evening, usually by 7–8 pm.`);
       return;
     }
     toast(res.started ? "Checking NSE and BSE for new data. This takes about 5 minutes; the page will update by itself." : "An update is already running. The page will update by itself when it finishes.");
