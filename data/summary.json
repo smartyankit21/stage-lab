@@ -1,0 +1,219 @@
+{
+ "date": "2026-10-09",
+ "tracked": 2123,
+ "universe": 2403,
+ "stage_counts": {
+  "1": 296,
+  "2": 430,
+  "3": 728,
+  "4": 707
+ },
+ "stage2": 430,
+ "candidates": 408,
+ "entered_stage2": [
+  "BSE:LTELEVATOR",
+  "BSE:MSECL",
+  "BSE:TOTEM",
+  "NSE:ADANIPORTS",
+  "NSE:ARIS",
+  "NSE:ASHIANA",
+  "NSE:AUROPHARMA",
+  "NSE:BAJAJCON",
+  "NSE:BLKASHYAP",
+  "NSE:DIFFNKG",
+  "NSE:DURLAX",
+  "NSE:EFFWA",
+  "NSE:ELLEN",
+  "NSE:ETERNAL",
+  "NSE:GRWRHITECH",
+  "NSE:INOXINDIA",
+  "NSE:IRISDOREME",
+  "NSE:JAYKAY",
+  "NSE:KARURVYSYA",
+  "NSE:KIRLOSENG",
+  "NSE:LALPATHLAB",
+  "NSE:MAGSON",
+  "NSE:MODIS",
+  "NSE:MOTISONS",
+  "NSE:NITINSPIN",
+  "NSE:NUVAMA",
+  "NSE:NYKAA",
+  "NSE:PRIMESECU",
+  "NSE:RADICO",
+  "NSE:RPSGVENT",
+  "NSE:SGFIN",
+  "NSE:SGMART",
+  "NSE:SOFTTECH",
+  "NSE:SOUTHBANK",
+  "NSE:SURAKSHA",
+  "NSE:TIRUPATIFL",
+  "NSE:UEL",
+  "NSE:VINYAS",
+  "NSE:YASHO"
+ ],
+ "exited_stage2": [
+  "NSE:AKUMS",
+  "NSE:APOLLO",
+  "NSE:AVL",
+  "NSE:BALPHARMA",
+  "NSE:CORDSCABLE",
+  "NSE:ESAFSFB",
+  "NSE:FROG",
+  "NSE:GNA",
+  "NSE:GRINDWELL",
+  "NSE:GROWW",
+  "NSE:GULFPETRO",
+  "NSE:HINDOILEXP",
+  "NSE:KDDL",
+  "NSE:KRYSTAL",
+  "NSE:MAGADSUGAR",
+  "NSE:MOLDTECH",
+  "NSE:MUKKA",
+  "NSE:NGLFINE",
+  "NSE:OBSCP",
+  "NSE:PAYTM",
+  "NSE:RPGLIFE",
+  "NSE:SAILIFE",
+  "NSE:SHAREINDIA",
+  "NSE:SMLMAH",
+  "NSE:TCL",
+  "NSE:TI",
+  "NSE:TNPETRO",
+  "NSE:UNIVCABLES",
+  "NSE:VENKEYS",
+  "NSE:VENUSREM",
+  "NSE:VISHNU"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:SUPREMEPWR",
+   "change": 38.0
+  },
+  {
+   "key": "NSE:VIRAT",
+   "change": 34.0
+  },
+  {
+   "key": "NSE:MOBIKWIK",
+   "change": 34.0
+  },
+  {
+   "key": "NSE:NELCAST",
+   "change": 33.0
+  },
+  {
+   "key": "NSE:RAJOOENG",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:KAVDEFENCE",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:BGRENERGY",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:SAHANA",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:ONIXSOLAR",
+   "change": 24.0
+  },
+  {
+   "key": "BSE:NWIL",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:CANTABIL",
+   "change": 21.0
+  },
+  {
+   "key": "NSE:PARAGMILK",
+   "change": 20.0
+  },
+  {
+   "key": "NSE:WONDERLA",
+   "change": 20.0
+  },
+  {
+   "key": "NSE:BASILIC",
+   "change": 20.0
+  },
+  {
+   "key": "NSE:KRISHNADEF",
+   "change": 19.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:MOLDTECH",
+   "change": -77.0
+  },
+  {
+   "key": "NSE:VERANDA",
+   "change": -60.0
+  },
+  {
+   "key": "BSE:GTV",
+   "change": -49.0
+  },
+  {
+   "key": "BSE:REMAGNET",
+   "change": -36.0
+  },
+  {
+   "key": "NSE:V2RETAIL",
+   "change": -30.0
+  },
+  {
+   "key": "NSE:BHAGYANGR",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:TECHD",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:SATKARTAR",
+   "change": -26.0
+  },
+  {
+   "key": "NSE:TEXRAIL",
+   "change": -26.0
+  },
+  {
+   "key": "BSE:COSMICCRF",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:IFGLEXPOR",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:LAXMIINDIA",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:IKIO",
+   "change": -23.0
+  },
+  {
+   "key": "BSE:SPICELOUNG",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:ZUARIIND",
+   "change": -22.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 180,
+  "basic_industry_3m": 180
+ }
+}

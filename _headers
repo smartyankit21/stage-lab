@@ -1,0 +1,4 @@
+/data/*
+  Cache-Control: public, max-age=300, must-revalidate
+/screeners/*
+  Content-Type: text/javascript; charset=utf-8
