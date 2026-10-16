@@ -1,0 +1,216 @@
+{
+ "date": "2026-10-16",
+ "tracked": 2118,
+ "universe": 2381,
+ "stage_counts": {
+  "1": 239,
+  "2": 431,
+  "3": 752,
+  "4": 723
+ },
+ "stage2": 431,
+ "candidates": 440,
+ "entered_stage2": [
+  "BSE:AJCJEWEL",
+  "NSE:ACMESOLAR",
+  "NSE:AEROFLEX",
+  "NSE:BANSALWIRE",
+  "NSE:CALSOFT",
+  "NSE:DHABRIYA",
+  "NSE:DIVISLAB",
+  "NSE:ECOLINE",
+  "NSE:ELLEN",
+  "NSE:ETERNAL",
+  "NSE:FAIRCHEMOR",
+  "NSE:GANECOS",
+  "NSE:GODREJAGRO",
+  "NSE:GRAPHITE",
+  "NSE:HARSHA",
+  "NSE:ICIL",
+  "NSE:INDOCO",
+  "NSE:JTLIND",
+  "NSE:KESORAMIND",
+  "NSE:KIRLFER",
+  "NSE:LUMAXTECH",
+  "NSE:MAGSON",
+  "NSE:MONOLITH",
+  "NSE:OMAXE",
+  "NSE:PRINCEPIPE",
+  "NSE:RPTECH",
+  "NSE:SANSERA",
+  "NSE:SAREGAMA",
+  "NSE:SGMART",
+  "NSE:SHILPAMED",
+  "NSE:SHRIPISTON",
+  "NSE:SILKFLEX",
+  "NSE:SINGERIND",
+  "NSE:SOLARINDS",
+  "NSE:SPLPETRO",
+  "NSE:SUPRIYA",
+  "NSE:TAALTECH",
+  "NSE:TARSONS",
+  "NSE:TEXMOPIPES",
+  "NSE:TI",
+  "NSE:TNPETRO",
+  "NSE:WPIL"
+ ],
+ "exited_stage2": [
+  "BSE:AFCOM",
+  "BSE:IKOMA",
+  "BSE:STDSFAC",
+  "NSE:AARTIIND",
+  "NSE:ADFFOODS",
+  "NSE:AHCL",
+  "NSE:AMAL",
+  "NSE:AMANTA",
+  "NSE:ANGELONE",
+  "NSE:CHENNPETRO",
+  "NSE:HINDOILEXP",
+  "NSE:KENNAMET",
+  "NSE:MAXESTATES",
+  "NSE:MCX",
+  "NSE:MTARTECH",
+  "NSE:NRBBEARING",
+  "NSE:PHOENIXLTD",
+  "NSE:PLAZACABLE",
+  "NSE:PRIMESECU",
+  "NSE:PURPLEUTED",
+  "NSE:RPSGVENT",
+  "NSE:SEAMECLTD",
+  "NSE:SGIL",
+  "NSE:SHETHJI",
+  "NSE:SOTL"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:FREDUN",
+   "change": 36.0
+  },
+  {
+   "key": "NSE:GALLANTT",
+   "change": 33.0
+  },
+  {
+   "key": "NSE:GICL",
+   "change": 32.0
+  },
+  {
+   "key": "NSE:ORIENTELEC",
+   "change": 32.0
+  },
+  {
+   "key": "NSE:VOLERCAR",
+   "change": 30.0
+  },
+  {
+   "key": "NSE:ASIANTILES",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:ONWARDTEC",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:SINGERIND",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:PASHUPATI",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:TATAELXSI",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:MEGATHERM",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:SEJALLTD",
+   "change": 22.0
+  },
+  {
+   "key": "NSE:SHRINGARMS",
+   "change": 21.0
+  },
+  {
+   "key": "BSE:GEE",
+   "change": 21.0
+  },
+  {
+   "key": "NSE:ONMOBILE",
+   "change": 21.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:TECHD",
+   "change": -36.0
+  },
+  {
+   "key": "NSE:OLIL",
+   "change": -33.0
+  },
+  {
+   "key": "NSE:AMAL",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:STALLION",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:SANGHVIMOV",
+   "change": -27.0
+  },
+  {
+   "key": "BSE:ACESOFT",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:HIRECT",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:YESBANK",
+   "change": -22.0
+  },
+  {
+   "key": "NSE:ARMANFIN",
+   "change": -21.0
+  },
+  {
+   "key": "NSE:PLASTIBLEN",
+   "change": -21.0
+  },
+  {
+   "key": "NSE:SIGACHI",
+   "change": -20.0
+  },
+  {
+   "key": "NSE:SUNDROP",
+   "change": -20.0
+  },
+  {
+   "key": "NSE:ITDC",
+   "change": -20.0
+  },
+  {
+   "key": "NSE:EMPOWER",
+   "change": -19.0
+  },
+  {
+   "key": "BSE:HIGHENE",
+   "change": -19.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 180,
+  "basic_industry_3m": 180
+ }
+}
