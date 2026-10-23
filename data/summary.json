@@ -1,0 +1,238 @@
+{
+ "date": "2026-10-23",
+ "tracked": 2129,
+ "universe": 2397,
+ "stage_counts": {
+  "1": 166,
+  "2": 174,
+  "3": 993,
+  "4": 817
+ },
+ "stage2": 174,
+ "candidates": 390,
+ "entered_stage2": [
+  "NSE:AKSHARCHEM",
+  "NSE:ECOLINE",
+  "NSE:GOACARBON",
+  "NSE:GRWRHITECH",
+  "NSE:IPCALAB",
+  "NSE:KARNIKA",
+  "NSE:KIRLFER",
+  "NSE:KOLTEPATIL",
+  "NSE:KRISHNADEF",
+  "NSE:MVGJL",
+  "NSE:PGIL",
+  "NSE:PRIZOR",
+  "NSE:REGAAL",
+  "NSE:SGMART",
+  "NSE:SHREEPUSHK",
+  "NSE:STLTECH",
+  "NSE:VIJAYPD"
+ ],
+ "exited_stage2": [
+  "BSE:ASMTEC",
+  "BSE:BHATIA",
+  "BSE:BRGIL",
+  "BSE:FOSECOC",
+  "BSE:HOCL",
+  "BSE:KALYANI",
+  "BSE:LTELEVATOR",
+  "BSE:RESONANCE",
+  "BSE:SHHARICH",
+  "BSE:SIMPLEXCAS",
+  "BSE:SUGSLLOYD",
+  "BSE:SUNITATOOL",
+  "BSE:TELGE",
+  "BSE:VALIANT",
+  "NSE:ADANIPORTS",
+  "NSE:AGARWALTUF",
+  "NSE:AKIKO",
+  "NSE:ARIES",
+  "NSE:ASAHISONG",
+  "NSE:BBOX",
+  "NSE:BLISSGVS",
+  "NSE:CRAFTSMAN",
+  "NSE:DBOL",
+  "NSE:DHAMPURSUG",
+  "NSE:DIVISLAB",
+  "NSE:DYNAMATECH",
+  "NSE:ELANTAS",
+  "NSE:FEDFINA",
+  "NSE:FILATEX",
+  "NSE:GALAXYSURF",
+  "NSE:GODREJAGRO",
+  "NSE:GULFPETRO",
+  "NSE:HAL",
+  "NSE:HALDYNGL",
+  "NSE:INVPRECQ",
+  "NSE:JAYKAY",
+  "NSE:JKIPL",
+  "NSE:KANORICHEM",
+  "NSE:KARURVYSYA",
+  "NSE:KMCSHIL",
+  "NSE:KODYTECH",
+  "NSE:MARINE",
+  "NSE:MARKOLINES",
+  "NSE:MAZDA",
+  "NSE:MEGATHERM",
+  "NSE:MMP",
+  "NSE:MONOLITH",
+  "NSE:MUKANDLTD",
+  "NSE:NITINSPIN",
+  "NSE:NRVANDANA",
+  "NSE:OPTIVALUE",
+  "NSE:PAISALO",
+  "NSE:PASUPTAC",
+  "NSE:PHOENIXLTD",
+  "NSE:RGL",
+  "NSE:RPGLIFE",
+  "NSE:SALSTEEL",
+  "NSE:SAREGAMA",
+  "NSE:SATIN",
+  "NSE:SGRL",
+  "NSE:SHALPAINTS",
+  "NSE:SMSPHARMA",
+  "NSE:SONAMLTD",
+  "NSE:STOVEKRAFT",
+  "NSE:SUNFLAG",
+  "NSE:SUNLITE",
+  "NSE:SVLL",
+  "NSE:TAURIAN",
+  "NSE:UDS",
+  "NSE:VENKEYS",
+  "NSE:VINDHYATEL",
+  "NSE:ZIMLAB"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:AGOL",
+   "change": 45.0
+  },
+  {
+   "key": "NSE:IGIL",
+   "change": 32.0
+  },
+  {
+   "key": "NSE:KOTYARK",
+   "change": 30.0
+  },
+  {
+   "key": "BSE:REMAGNET",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:MANORG",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:TTML",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:MICEL",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:DCMSRIND",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:KHADIM",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:PASHUPATI",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:TRIVENI",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:PLATIND",
+   "change": 22.0
+  },
+  {
+   "key": "NSE:KARNIKA",
+   "change": 20.0
+  },
+  {
+   "key": "NSE:HILINFRA",
+   "change": 20.0
+  },
+  {
+   "key": "NSE:BALKRISIND",
+   "change": 20.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:EMUDHRA",
+   "change": -50.0
+  },
+  {
+   "key": "NSE:GMBREW",
+   "change": -44.0
+  },
+  {
+   "key": "NSE:TAKE",
+   "change": -41.0
+  },
+  {
+   "key": "NSE:MOL",
+   "change": -31.0
+  },
+  {
+   "key": "NSE:KILITCH",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:ASIANTILES",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:PDMJEPAPER",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:HINDCOMPOS",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:PAUSHAKLTD",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:KCPSUGIND",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:VMARCIND",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:BGRENERGY",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:JSFB",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:HERITGFOOD",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:SPUNWEB",
+   "change": -22.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 182,
+  "basic_industry_3m": 182
+ }
+}
