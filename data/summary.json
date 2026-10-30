@@ -1,0 +1,242 @@
+{
+ "date": "2026-10-30",
+ "tracked": 2087,
+ "universe": 2340,
+ "stage_counts": {
+  "1": 124,
+  "2": 240,
+  "3": 871,
+  "4": 873
+ },
+ "stage2": 240,
+ "candidates": 351,
+ "entered_stage2": [
+  "BSE:IKOMA",
+  "BSE:WORKMATES",
+  "NSE:AKANKSHA",
+  "NSE:ANUHPHR",
+  "NSE:APOLLOHOSP",
+  "NSE:AUROPHARMA",
+  "NSE:BEML",
+  "NSE:BODALCHEM",
+  "NSE:BRAHMINFRA",
+  "NSE:CUBEXTUB",
+  "NSE:GRPLTD",
+  "NSE:HEALTHIETF",
+  "NSE:HEALTHY",
+  "NSE:KPRMILL",
+  "NSE:MEESHO",
+  "NSE:NAVINFLUOR",
+  "NSE:OILCOUNTUB",
+  "NSE:PWL",
+  "NSE:SAILIFE",
+  "NSE:SHAILY",
+  "NSE:SHETHJI",
+  "NSE:SHILPAMED",
+  "NSE:TASTYBITE",
+  "NSE:TAURIAN",
+  "NSE:WELSPUNLIV"
+ ],
+ "exited_stage2": [
+  "BSE:7SEASL",
+  "BSE:AJCJEWEL",
+  "BSE:FOSECOC",
+  "BSE:KALYANI",
+  "BSE:NEETUYOSHI",
+  "BSE:RNITAI",
+  "NSE:AGARWALTUF",
+  "NSE:AKSHARCHEM",
+  "NSE:ANTELOPUS",
+  "NSE:APOLLO",
+  "NSE:ARFIN",
+  "NSE:ARHAM",
+  "NSE:ASAHISONG",
+  "NSE:AVADHSUGAR",
+  "NSE:AXISCADES",
+  "NSE:BBOX",
+  "NSE:BLISSGVS",
+  "NSE:CNL",
+  "NSE:CPPLUS",
+  "NSE:DHANBANK",
+  "NSE:EBGNG",
+  "NSE:EMAMIPAP",
+  "NSE:FILATEX",
+  "NSE:GANECOS",
+  "NSE:GMMPFAUDLR",
+  "NSE:GNA",
+  "NSE:GOACARBON",
+  "NSE:GREENPLY",
+  "NSE:HFCL",
+  "NSE:ICIL",
+  "NSE:INDGN",
+  "NSE:INDSWFTLAB",
+  "NSE:JAYKAY",
+  "NSE:KABRAEXTRU",
+  "NSE:KANORICHEM",
+  "NSE:KODYTECH",
+  "NSE:KOPRAN",
+  "NSE:KPL",
+  "NSE:KRONOX",
+  "NSE:LALPATHLAB",
+  "NSE:LGEINDIA",
+  "NSE:LOKESHMACH",
+  "NSE:MARKOLINES",
+  "NSE:MOREPENLAB",
+  "NSE:NUVAMA",
+  "NSE:PAISALO",
+  "NSE:PASUPTAC",
+  "NSE:PREMIERPOL",
+  "NSE:PRIMESECU",
+  "NSE:PSRAJ",
+  "NSE:RBZJEWEL",
+  "NSE:REGAAL",
+  "NSE:RPGLIFE",
+  "NSE:SHALPAINTS",
+  "NSE:SHANTIGOLD",
+  "NSE:SONAMLTD",
+  "NSE:SPORTKING",
+  "NSE:STAR",
+  "NSE:STLTECH",
+  "NSE:SWARAJ",
+  "NSE:TANAA",
+  "NSE:TEXINFRA",
+  "NSE:TGVSL",
+  "NSE:UHTL",
+  "NSE:UNIMECH",
+  "NSE:VIJAYA",
+  "NSE:VINDHYATEL",
+  "NSE:WHEELS"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:DCMSRIND",
+   "change": 46.0
+  },
+  {
+   "key": "NSE:MARSONS",
+   "change": 35.0
+  },
+  {
+   "key": "NSE:KOTYARK",
+   "change": 34.0
+  },
+  {
+   "key": "NSE:BOROLTD",
+   "change": 34.0
+  },
+  {
+   "key": "BSE:CNCRD",
+   "change": 34.0
+  },
+  {
+   "key": "NSE:ONESOURCE",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:VMARCIND",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:URBANCO",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:POONAWALLA",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:HILINFRA",
+   "change": 26.0
+  },
+  {
+   "key": "BSE:DESCO",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:TANLA",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:AARTIDRUGS",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:LGHL",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:SANGHVIMOV",
+   "change": 23.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:TAKE",
+   "change": -37.0
+  },
+  {
+   "key": "NSE:MVGJL",
+   "change": -36.0
+  },
+  {
+   "key": "NSE:MASTEK",
+   "change": -34.0
+  },
+  {
+   "key": "NSE:ECLERX",
+   "change": -32.0
+  },
+  {
+   "key": "NSE:EQUITASBNK",
+   "change": -31.0
+  },
+  {
+   "key": "NSE:SIGMA",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:CARTRADE",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:DMCC",
+   "change": -28.0
+  },
+  {
+   "key": "BSE:RDBIPL",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:HEXT",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:PREMEXPLN",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:SEJALLTD",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:FAIRCHEMOR",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:ASTEC",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:EPACKPEB",
+   "change": -23.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 182,
+  "basic_industry_3m": 182
+ }
+}
