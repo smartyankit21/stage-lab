@@ -1,0 +1,225 @@
+{
+ "date": "2026-11-06",
+ "tracked": 2093,
+ "universe": 2354,
+ "stage_counts": {
+  "1": 91,
+  "2": 362,
+  "3": 881,
+  "4": 784
+ },
+ "stage2": 362,
+ "candidates": 404,
+ "entered_stage2": [
+  "BSE:CNCRD",
+  "BSE:NATFIT",
+  "NSE:ACE",
+  "NSE:AGARWALTUF",
+  "NSE:APOLLOHOSP",
+  "NSE:BAJAJ-AUTO",
+  "NSE:BAJFINANCE",
+  "NSE:BLUEWATER",
+  "NSE:DELAPLEX",
+  "NSE:FRESHARA",
+  "NSE:HAWKINCOOK",
+  "NSE:HOACFOODS",
+  "NSE:KALYANKJIL",
+  "NSE:LTFOODS",
+  "NSE:MANAKCOAT",
+  "NSE:MIDSELIETF",
+  "NSE:MMFL",
+  "NSE:MUKKA",
+  "NSE:PURPLEUTED",
+  "NSE:RPSGVENT",
+  "NSE:SMARTWORKS",
+  "NSE:STARHEALTH",
+  "NSE:STYLEBAAZA",
+  "NSE:SUNPHARMA",
+  "NSE:UNIVASTU",
+  "NSE:VIJAYA",
+  "NSE:WABAG"
+ ],
+ "exited_stage2": [
+  "BSE:EMMFORCE",
+  "BSE:NEETUYOSHI",
+  "BSE:PATELCHEM",
+  "BSE:ROBU",
+  "NSE:AEROENTER",
+  "NSE:AEROFLEX",
+  "NSE:AHCL",
+  "NSE:AVADHSUGAR",
+  "NSE:BALRAMCHIN",
+  "NSE:BBOX",
+  "NSE:BLKASHYAP",
+  "NSE:DOLPHIN",
+  "NSE:EBGNG",
+  "NSE:FILATEX",
+  "NSE:GABRIEL",
+  "NSE:GNRL",
+  "NSE:GULFPETRO",
+  "NSE:IBULLSLTD",
+  "NSE:INDUSINVIT",
+  "NSE:IPCALAB",
+  "NSE:JSWINFRA",
+  "NSE:KINGFA",
+  "NSE:KODYTECH",
+  "NSE:KRONOX",
+  "NSE:LMW",
+  "NSE:LOKESHMACH",
+  "NSE:MAFANG",
+  "NSE:MAGADSUGAR",
+  "NSE:MARINE",
+  "NSE:MARKOLINES",
+  "NSE:MASPTOP50",
+  "NSE:MEGATHERM",
+  "NSE:MOTHERSON",
+  "NSE:OAL",
+  "NSE:OPTIVALUE",
+  "NSE:PARTH",
+  "NSE:PUSHPA",
+  "NSE:RPTECH",
+  "NSE:RUBICON",
+  "NSE:SETL",
+  "NSE:SYNCOMF",
+  "NSE:TANAA",
+  "NSE:TBZ",
+  "NSE:VIESL",
+  "NSE:VINYAS",
+  "NSE:VOEPL",
+  "NSE:WINDMACHIN",
+  "NSE:WSTCSTPAPR",
+  "NSE:ZIMLAB"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:PARAGMILK",
+   "change": 36.0
+  },
+  {
+   "key": "BSE:CIANAGRO",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:SJLOGISTIC",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:ALEMBICLTD",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:MOLDTKPAC",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:FAZE3Q",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:MUTHOOTFIN",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:VRLLOG",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:PRINCEPIPE",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:GANESHCP",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:BAJFINANCE",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:AGIIL",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:NAM-INDIA",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:APLLTD",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:HDFCAMC",
+   "change": 22.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:CONCORDBIO",
+   "change": -37.0
+  },
+  {
+   "key": "NSE:KOTYARK",
+   "change": -35.0
+  },
+  {
+   "key": "NSE:SUPRIYA",
+   "change": -34.0
+  },
+  {
+   "key": "NSE:AAATECH",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:SHILCTECH",
+   "change": -29.0
+  },
+  {
+   "key": "NSE:ELLEN",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:ATLANTAA",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:NETWEB",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:GNFC",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:GMMPFAUDLR",
+   "change": -26.0
+  },
+  {
+   "key": "NSE:BLUECLOUDS",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:IFBAGRO",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:CUMMINSIND",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:SOUTHWEST",
+   "change": -23.0
+  },
+  {
+   "key": "BSE:MRCAGRO",
+   "change": -22.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 181,
+  "basic_industry_3m": 181
+ }
+}
