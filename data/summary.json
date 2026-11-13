@@ -1,0 +1,222 @@
+{
+ "date": "2026-11-13",
+ "tracked": 2086,
+ "universe": 2341,
+ "stage_counts": {
+  "1": 73,
+  "2": 436,
+  "3": 833,
+  "4": 778
+ },
+ "stage2": 436,
+ "candidates": 368,
+ "entered_stage2": [
+  "BSE:AFCOM",
+  "BSE:QLL",
+  "BSE:ROBU",
+  "BSE:VALIANT",
+  "NSE:ASAHIINDIA",
+  "NSE:BFINVEST",
+  "NSE:CENTUM",
+  "NSE:DVL",
+  "NSE:DWARKESH",
+  "NSE:EDELWEISS",
+  "NSE:INDIGO",
+  "NSE:INDSWFTLAB",
+  "NSE:ITDC",
+  "NSE:KRBL",
+  "NSE:KSHINTL",
+  "NSE:LOTUSDEV",
+  "NSE:MAWANASUG",
+  "NSE:MIDCAPETF",
+  "NSE:MIDCAPIETF",
+  "NSE:MOM100",
+  "NSE:MOMIDMTM",
+  "NSE:MOSMALL250",
+  "NSE:MSTCLTD",
+  "NSE:MUNJALAU",
+  "NSE:NEULANDLAB",
+  "NSE:NRVANDANA",
+  "NSE:ORIENTBELL",
+  "NSE:PARAGMILK",
+  "NSE:PIXTRANS",
+  "NSE:PWL",
+  "NSE:SEJALLTD",
+  "NSE:UNITDSPR",
+  "NSE:VRLLOG"
+ ],
+ "exited_stage2": [
+  "BSE:BRGIL",
+  "BSE:KALYANI",
+  "BSE:MSECL",
+  "BSE:NATFIT",
+  "BSE:PRIMIND",
+  "BSE:SUGSLLOYD",
+  "BSE:TANFACIND",
+  "NSE:APEXECO",
+  "NSE:CAPITALSFB",
+  "NSE:FEDDERSHOL",
+  "NSE:FINEORG",
+  "NSE:GRANULES",
+  "NSE:GRASIM",
+  "NSE:HAL",
+  "NSE:IGPL",
+  "NSE:INDNIPPON",
+  "NSE:IZMO",
+  "NSE:JASH",
+  "NSE:MANINDS",
+  "NSE:MARINE",
+  "NSE:MARKSANS",
+  "NSE:METAL",
+  "NSE:NAM-INDIA",
+  "NSE:NAMOEWASTE",
+  "NSE:NORTHARC",
+  "NSE:PIDILITIND",
+  "NSE:PNBHOUSING",
+  "NSE:RGL",
+  "NSE:RSWM",
+  "NSE:RUBICON",
+  "NSE:RUBYMILLS",
+  "NSE:SAKAR",
+  "NSE:SMALL250",
+  "NSE:SPARC",
+  "NSE:TALBROAUTO",
+  "NSE:TANAA",
+  "NSE:TBZ",
+  "NSE:UNIVASTU",
+  "NSE:VINYAS",
+  "NSE:VISAKAIND"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:JYOTISTRUC",
+   "change": 44.0
+  },
+  {
+   "key": "NSE:SHARDACROP",
+   "change": 36.0
+  },
+  {
+   "key": "NSE:HLEGLAS",
+   "change": 32.0
+  },
+  {
+   "key": "NSE:AVANTEL",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:GFLLIMITED",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:CHEMPLASTS",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:AEGISVOPAK",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:ROTO",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:MSTCLTD",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:AUTOAXLES",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:SUDARSCHEM",
+   "change": 24.0
+  },
+  {
+   "key": "NSE:SHALPAINTS",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:HINDOILEXP",
+   "change": 23.0
+  },
+  {
+   "key": "NSE:ALEMBICLTD",
+   "change": 22.0
+  },
+  {
+   "key": "NSE:RUSHIL",
+   "change": 21.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:PASHUPATI",
+   "change": -88.0
+  },
+  {
+   "key": "NSE:SUPRIYA",
+   "change": -36.0
+  },
+  {
+   "key": "BSE:REMAGNET",
+   "change": -35.0
+  },
+  {
+   "key": "NSE:SOUTHWEST",
+   "change": -34.0
+  },
+  {
+   "key": "NSE:RATEGAIN",
+   "change": -31.0
+  },
+  {
+   "key": "NSE:ELLEN",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:SSDL",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:LGBBROSLTD",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:ASTRAL",
+   "change": -26.0
+  },
+  {
+   "key": "NSE:REMUS",
+   "change": -26.0
+  },
+  {
+   "key": "NSE:MATRIMONY",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:DREDGECORP",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:IKS",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:3MINDIA",
+   "change": -23.0
+  },
+  {
+   "key": "NSE:SHINDL",
+   "change": -23.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 181,
+  "basic_industry_3m": 181
+ }
+}
