@@ -1,0 +1,215 @@
+{
+ "date": "2026-11-20",
+ "tracked": 2087,
+ "universe": 2330,
+ "stage_counts": {
+  "1": 88,
+  "2": 417,
+  "3": 824,
+  "4": 784
+ },
+ "stage2": 417,
+ "candidates": 362,
+ "entered_stage2": [
+  "BSE:ADMACH",
+  "BSE:MITSU",
+  "NSE:ADANIPOWER",
+  "NSE:AKIKO",
+  "NSE:ALLDIGI",
+  "NSE:AONETOTAL",
+  "NSE:COHANCE",
+  "NSE:COMSYN",
+  "NSE:DANISH",
+  "NSE:EVIETF",
+  "NSE:EXIDEIND",
+  "NSE:FRESHARA",
+  "NSE:GMRAIRPORT",
+  "NSE:HBLENGINE",
+  "NSE:HDFCMID150",
+  "NSE:INDUSINVIT",
+  "NSE:INFLUX",
+  "NSE:JLHL",
+  "NSE:JSWCEMENT",
+  "NSE:JSWINFRA",
+  "NSE:KOHINOOR",
+  "NSE:PAYTM",
+  "NSE:PRESTIGE",
+  "NSE:PVTBANIETF",
+  "NSE:PVTBANKADD",
+  "NSE:RBLBANK",
+  "NSE:SIGACHI",
+  "NSE:TATATECH",
+  "NSE:THYROCARE"
+ ],
+ "exited_stage2": [
+  "BSE:AMIC",
+  "BSE:HOCL",
+  "BSE:HSIL",
+  "BSE:SHHARICH",
+  "NSE:ACSTECH",
+  "NSE:AEROENTER",
+  "NSE:AETHER",
+  "NSE:ALIVUS",
+  "NSE:ARIHANTCAP",
+  "NSE:CENTUM",
+  "NSE:DIFFNKG",
+  "NSE:DPABHUSHAN",
+  "NSE:GESHIP",
+  "NSE:GOODLUCK",
+  "NSE:GRAPHITE",
+  "NSE:GUFICBIO",
+  "NSE:HARSHA",
+  "NSE:JKIPL",
+  "NSE:KESORAMIND",
+  "NSE:KOLTEPATIL",
+  "NSE:KOPRAN",
+  "NSE:MADHUSUDAN",
+  "NSE:MANBA",
+  "NSE:MOSMALL250",
+  "NSE:NEULANDLAB",
+  "NSE:ONEPOINT",
+  "NSE:QPOWER",
+  "NSE:QUESS",
+  "NSE:RACLGEAR",
+  "NSE:RANEHOLDIN",
+  "NSE:RAYMONDREL",
+  "NSE:SAMBHV",
+  "NSE:SKYGOLD",
+  "NSE:SWANDEF",
+  "NSE:SYNCOMF",
+  "NSE:TITAN",
+  "NSE:XPROINDIA"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "NSE:CGRAPHICS",
+   "change": 38.0
+  },
+  {
+   "key": "BSE:ORGANICREC",
+   "change": 33.0
+  },
+  {
+   "key": "NSE:VEEFIN",
+   "change": 31.0
+  },
+  {
+   "key": "BSE:BRIDGESE",
+   "change": 30.0
+  },
+  {
+   "key": "NSE:AJMERA",
+   "change": 30.0
+  },
+  {
+   "key": "NSE:KARNIKA",
+   "change": 30.0
+  },
+  {
+   "key": "NSE:TTKHLTCARE",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:MAXHEALTH",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:AFIL",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:KOTYARK",
+   "change": 28.0
+  },
+  {
+   "key": "NSE:IREDA",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:BLUESTARCO",
+   "change": 27.0
+  },
+  {
+   "key": "NSE:CHEMPLASTS",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:HMAAGRO",
+   "change": 26.0
+  },
+  {
+   "key": "NSE:DEEPAKFERT",
+   "change": 25.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "BSE:JDCABLES",
+   "change": -43.0
+  },
+  {
+   "key": "BSE:CCDL",
+   "change": -43.0
+  },
+  {
+   "key": "NSE:SAFEENTP",
+   "change": -40.0
+  },
+  {
+   "key": "NSE:DCMSRIND",
+   "change": -40.0
+  },
+  {
+   "key": "NSE:TRANSWORLD",
+   "change": -38.0
+  },
+  {
+   "key": "NSE:APEX",
+   "change": -36.0
+  },
+  {
+   "key": "NSE:PRABHA",
+   "change": -34.0
+  },
+  {
+   "key": "NSE:FLYSBS",
+   "change": -33.0
+  },
+  {
+   "key": "NSE:VMARCIND",
+   "change": -32.0
+  },
+  {
+   "key": "NSE:RICOAUTO",
+   "change": -32.0
+  },
+  {
+   "key": "BSE:EMMFORCE",
+   "change": -32.0
+  },
+  {
+   "key": "NSE:BALUFORGE",
+   "change": -32.0
+  },
+  {
+   "key": "NSE:KAVDEFENCE",
+   "change": -31.0
+  },
+  {
+   "key": "NSE:SILVER1",
+   "change": -30.0
+  },
+  {
+   "key": "NSE:MEGATHERM",
+   "change": -30.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 181,
+  "basic_industry_3m": 181
+ }
+}
