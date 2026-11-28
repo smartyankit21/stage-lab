@@ -1,0 +1,217 @@
+{
+ "date": "2026-11-27",
+ "tracked": 2092,
+ "universe": 2328,
+ "stage_counts": {
+  "1": 92,
+  "2": 443,
+  "3": 796,
+  "4": 782
+ },
+ "stage2": 443,
+ "candidates": 307,
+ "entered_stage2": [
+  "BSE:SCAGRO",
+  "BSE:SHHARICH",
+  "NSE:ACMESOLAR",
+  "NSE:AGARWALTUF",
+  "NSE:AGIIL",
+  "NSE:AIMTRON",
+  "NSE:AKUMS",
+  "NSE:ARTEMISMED",
+  "NSE:ASTRAMICRO",
+  "NSE:AURUM",
+  "NSE:AVADHSUGAR",
+  "NSE:BALRAMCHIN",
+  "NSE:BHARATSE",
+  "NSE:BLSE",
+  "NSE:DATAPATTNS",
+  "NSE:DIACABS",
+  "NSE:DIFFNKG",
+  "NSE:DIXON",
+  "NSE:DYNAMATECH",
+  "NSE:EPL",
+  "NSE:ESAFSFB",
+  "NSE:GESHIP",
+  "NSE:HALDER",
+  "NSE:HDFCBSE500",
+  "NSE:IKIO",
+  "NSE:KAMDHENU",
+  "NSE:KOLTEPATIL",
+  "NSE:KRISHCA",
+  "NSE:MACPOWER",
+  "NSE:MARINE",
+  "NSE:MAWANASUG",
+  "NSE:MOMENTUM50",
+  "NSE:MOSMALL250",
+  "NSE:NILKAMAL",
+  "NSE:ONEPOINT",
+  "NSE:PARAS",
+  "NSE:PATELRMART",
+  "NSE:PROTEAN",
+  "NSE:RAYMONDREL",
+  "NSE:RSWM",
+  "NSE:SMALL250",
+  "NSE:SML100CASE",
+  "NSE:SOLARINDS",
+  "NSE:SUPREMEPWR",
+  "NSE:TASTYBITE",
+  "NSE:TATACAP",
+  "NSE:TEXINFRA",
+  "NSE:TITAN",
+  "NSE:UNIMECH",
+  "NSE:VINSYS",
+  "NSE:XPROINDIA"
+ ],
+ "exited_stage2": [
+  "BSE:PRIMIND",
+  "NSE:BAJAJ-AUTO",
+  "NSE:BRAHMINFRA",
+  "NSE:GMRAIRPORT",
+  "NSE:INDOCO",
+  "NSE:INDUSINVIT",
+  "NSE:ISGEC",
+  "NSE:JSWCEMENT",
+  "NSE:KAJARIACER",
+  "NSE:LMW",
+  "NSE:NITTAGELA",
+  "NSE:PRADPME",
+  "NSE:ROLEXRINGS",
+  "NSE:SILKFLEX",
+  "NSE:SUNPHARMA",
+  "NSE:VINEETLAB",
+  "NSE:ZYDUSLIFE"
+ ],
+ "rs_gainers_week": [
+  {
+   "key": "BSE:ORGANICREC",
+   "change": 57.0
+  },
+  {
+   "key": "NSE:SMCGLOBAL",
+   "change": 50.0
+  },
+  {
+   "key": "BSE:BRIDGESE",
+   "change": 46.0
+  },
+  {
+   "key": "BSE:MCFL",
+   "change": 44.0
+  },
+  {
+   "key": "NSE:JLHL",
+   "change": 43.0
+  },
+  {
+   "key": "NSE:UNITECH",
+   "change": 41.0
+  },
+  {
+   "key": "NSE:AJMERA",
+   "change": 35.0
+  },
+  {
+   "key": "BSE:META",
+   "change": 32.0
+  },
+  {
+   "key": "NSE:THOMASCOTT",
+   "change": 32.0
+  },
+  {
+   "key": "NSE:COHANCE",
+   "change": 30.0
+  },
+  {
+   "key": "BSE:EVEXIA",
+   "change": 30.0
+  },
+  {
+   "key": "BSE:KESARPE",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:VEEFIN",
+   "change": 29.0
+  },
+  {
+   "key": "NSE:ONIXSOLAR",
+   "change": 25.0
+  },
+  {
+   "key": "NSE:KNAGRI",
+   "change": 24.0
+  }
+ ],
+ "rs_losers_week": [
+  {
+   "key": "NSE:APLAPOLLO",
+   "change": -45.0
+  },
+  {
+   "key": "NSE:SEIL",
+   "change": -44.0
+  },
+  {
+   "key": "NSE:IPHL",
+   "change": -43.0
+  },
+  {
+   "key": "NSE:SATKARTAR",
+   "change": -42.0
+  },
+  {
+   "key": "NSE:SHANTIGEAR",
+   "change": -33.0
+  },
+  {
+   "key": "NSE:MAXVOLT",
+   "change": -33.0
+  },
+  {
+   "key": "NSE:BFINVEST",
+   "change": -28.0
+  },
+  {
+   "key": "NSE:SACHEEROME",
+   "change": -27.0
+  },
+  {
+   "key": "BSE:NWIL",
+   "change": -27.0
+  },
+  {
+   "key": "NSE:GYFTR",
+   "change": -26.0
+  },
+  {
+   "key": "NSE:AVANTIFEED",
+   "change": -25.0
+  },
+  {
+   "key": "NSE:RICOAUTO",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:PANORAMA",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:SHANTIGOLD",
+   "change": -24.0
+  },
+  {
+   "key": "NSE:TVSSRICHAK",
+   "change": -23.0
+  }
+ ],
+ "groups": {
+  "sector_12m": 22,
+  "sector_3m": 22,
+  "industry_12m": 58,
+  "industry_3m": 58,
+  "basic_industry_12m": 181,
+  "basic_industry_3m": 181
+ }
+}
